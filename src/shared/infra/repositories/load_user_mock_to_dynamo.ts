@@ -7,11 +7,10 @@ import { DynamoDBClient, waitUntilTableExists, ListTablesCommand, CreateTableCom
 import { Environments } from '../../environments'
 import { UserRepositoryMock } from './user_repository_mock'
 import { UserRepositoryDynamo } from './user_repository_dynamo'
-import { config } from 'dotenv'
-config()
+import env from '../../../../index'
 
 async function setupDynamoTable(): Promise<void> {
-  const dynamoTableName = process.env.DYNAMO_TABLE_NAME
+  const dynamoTableName = env.DYNAMO_TABLE_NAME
   console.log('dynamoTableName - [SETUP_DYNAMO_TABLE] - ', dynamoTableName)
   // const endpointUrl = 'http://localhost:8000'
   // JS SDK v3 does not support global configuration.
@@ -75,7 +74,7 @@ async function setupDynamoTable(): Promise<void> {
         },
       })
 
-    console.log(`Table ${process.env.DYNAMO_TABLE_NAME} created!`)
+    console.log(`Table ${env.DYNAMO_TABLE_NAME} created!`)
   } else {
     console.log('Table already exists!')
   }
