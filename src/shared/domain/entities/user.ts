@@ -5,14 +5,14 @@ export type UserProps = {
   ra: string;
   name: string;
   email: string;
-  role: ROLE
+  role?: ROLE
 }
 
 export type JsonProps = {
   ra: string;
   name: string;
   email: string;
-  role: string;
+  role?: string;
 }
 
 export class User {
@@ -31,7 +31,9 @@ export class User {
       throw new EntityError('props.email')
     }
     this.props.email = props.email
-
+    if (props.role === null || props.role === undefined) {
+      this.props.role = ROLE.STUDENT
+    }
     if (!User.validateRole(props.role as ROLE)) {
       throw new EntityError('props.role')
     }
