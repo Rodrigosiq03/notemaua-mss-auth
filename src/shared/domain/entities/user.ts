@@ -1,26 +1,26 @@
-import { STATE, toEnum } from '../enums/state_enum'
 import { EntityError } from '../../helpers/errors/domain_errors'
+import { ROLE, toEnum } from '../enums/role_enum'
 
 export type UserProps = {
-  id: number;
+  ra: string;
   name: string;
   email: string;
-  state?: STATE;
+  role?: ROLE
 }
 
 export type JsonProps = {
-  user_id: number;
+  ra: string;
   name: string;
   email: string;
-  state?: string;
+  role?: string;
 }
 
 export class User {
   constructor (public props: UserProps) {
-    if (!User.validateId(props.id as number)) {
-      throw new EntityError('props.id')
+    if (!User.validateRa(props.ra as string)) {
+      throw new EntityError('props.ra')
     }
-    this.props.id = props.id
+    this.props.ra = props.ra
 
     if (!User.validateName(props.name)) {
       throw new EntityError('props.name')
@@ -31,23 +31,25 @@ export class User {
       throw new EntityError('props.email')
     }
     this.props.email = props.email
-
-    if (!User.validateState(props.state as STATE)) {
-      throw new EntityError('props.state')
+    if (props.role === null || props.role === undefined) {
+      this.props.role = ROLE.STUDENT
     }
-    this.props.state = props.state
+    if (!User.validateRole(props.role as ROLE)) {
+      throw new EntityError('props.role')
+    }
+    this.props.role = props.role
 
   }
 
-  get id() {
-    return this.props.id
+  get ra() {
+    return this.props.ra
   }
 
-  set setId(id: number) {
-    if (!User.validateId(id)) {
-      throw new EntityError('props.id')
+  set setRa(ra: string) {
+    if (!User.validateRa(ra)) {
+      throw new EntityError('props.ra')
     }
-    this.props.id = id
+    this.props.ra = ra
   }
 
   get name() {
@@ -72,39 +74,39 @@ export class User {
     this.props.email = email
   }
 
-  get state() {
-    return this.props.state
+  get role() {
+    return this.props.role
   }
 
-  set setState(state: STATE) {
-    if (!User.validateState(state)) {
-      throw new EntityError('props.state')
+  set setRole(role: ROLE) {
+    if (!User.validateRole(role)) {
+      throw new EntityError('props.role')
     }
-    this.props.state = state
+    this.props.role = role
   }
     
   static fromJSON(json: JsonProps) {
     return new User({
-      id: json.user_id,
+      ra: json.ra,
       name: json.name,
       email: json.email,
-      state: toEnum(json.state as string)
+      role: toEnum(json.role as string)
     })
   }
 
   toJSON() {
     return {
-      id: this.id,
+      ra: this.ra,
       name: this.name,
       email: this.email,
-      state: this.state
+      role: this.role
     }
   }
 
-  static validateId(id: number): boolean {
-    if (id == null) {
+  static validateRa(ra: string): boolean {
+    if (ra == null) {
       return false
-    } else if (typeof(id) != 'number') {
+    } else if (typeof(ra) != 'string') {
       return false
     }
     return true
@@ -136,11 +138,11 @@ export class User {
     return true
   }
 
-  static validateState(state: STATE): boolean {
-    if (state == null) {
+  static validateRole(role: ROLE): boolean {
+    if (role == null) {
       return false
     } 
-    if (Object.values(STATE).includes(state) == false) {
+    if (Object.values(ROLE).includes(role) == false) {
       return false
     }
     return true
