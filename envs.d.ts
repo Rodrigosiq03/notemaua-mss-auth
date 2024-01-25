@@ -10,5 +10,8 @@ declare namespace NodeJS {
     ENDPOINT_URL: string
     AWS_ACCESS_KEY_ID: string
     AWS_SECRET_ACCESS_KEY: string
+    MSS_NAME: string
+    S3_BUCKET_NAME: string
+    CLOUD_FRONT_DISTRIBUTION_DOMAIN: string
   }
 }
