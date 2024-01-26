@@ -5,7 +5,8 @@ export type UserProps = {
   ra: string;
   name: string;
   email: string;
-  role?: ROLE
+  role?: ROLE;
+  password: string;
 }
 
 export type JsonProps = {
@@ -13,6 +14,7 @@ export type JsonProps = {
   name: string;
   email: string;
   role?: string;
+  password: string;
 }
 
 export class User {
@@ -38,6 +40,10 @@ export class User {
       throw new EntityError('props.role')
     }
     this.props.role = props.role
+    if (!User.validatePassword(props.password)) {
+      throw new EntityError('props.password')
+    }
+    this.props.password = props.password
 
   }
 
@@ -84,13 +90,25 @@ export class User {
     }
     this.props.role = role
   }
+
+  get password() {
+    return this.props.password
+  }
+
+  set setPassword(password: string) {
+    if (!User.validatePassword(password)) {
+      throw new EntityError('props.password')
+    }
+    this.props.password = password
+  }
     
   static fromJSON(json: JsonProps) {
     return new User({
       ra: json.ra,
       name: json.name,
       email: json.email,
-      role: toEnum(json.role as string)
+      role: toEnum(json.role as string),
+      password: json.password
     })
   }
 
@@ -99,7 +117,8 @@ export class User {
       ra: this.ra,
       name: this.name,
       email: this.email,
-      role: this.role
+      role: this.role,
+      password: this.password
     }
   }
 
@@ -107,6 +126,8 @@ export class User {
     if (ra == null) {
       return false
     } else if (typeof(ra) != 'string') {
+      return false
+    } else if (ra.length !== 10) {
       return false
     }
     return true
@@ -143,6 +164,21 @@ export class User {
       return false
     } 
     if (Object.values(ROLE).includes(role) == false) {
+      return false
+    }
+    return true
+  }
+
+  static validatePassword(password: string): boolean {
+    const regexp = '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])'
+
+    if (password == null) {
+      return false
+    } else if (typeof(password) != 'string') {
+      return false
+    } else if (password.length < 6) {
+      return false
+    } else if (!password.match(regexp)) {
       return false
     }
     return true
