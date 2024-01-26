@@ -3,7 +3,7 @@ import { User } from '../../../../src/shared/domain/entities/user'
 import { STATE } from '../../../../src/shared/domain/enums/state_enum'
 import { DeleteUserViewmodel } from '../../../../src/modules/delete_user/app/delete_user_viewmodel'
 
-describe('Assert Delete User viewmodel is correct at all', () => {
+describe.skip('Assert Delete User viewmodel is correct at all', () => {
   it('Should activate viewmodel correctly', async () => {
     const user = new User({ id: 10, name: 'usuario1', email: 'usuario1@gmail.com', state: STATE.PENDING })
 

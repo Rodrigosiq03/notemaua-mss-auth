@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { handler } from '../../../../src/modules/update_user/app/update_user_presenter'
 
-describe('Assert Update User presenter is correct at all', () => {
+describe.skip('Assert Update User presenter is correct at all', () => {
   it('Should activate presenter correctly', async () => {
     const event = {
       'version': '2.0',

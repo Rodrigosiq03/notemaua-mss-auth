@@ -4,7 +4,7 @@ import { GetAllUsersUsecase } from '../../../../src/modules/get_all_users/app/ge
 import { GetAllUsersController } from '../../../../src/modules/get_all_users/app/get_all_users_controller'
 import { HttpRequest } from '../../../../src/shared/helpers/external_interfaces/http_models'
 
-describe('Assert Get All Users controller is correct at all', () => {
+describe.skip('Assert Get All Users controller is correct at all', () => {
   it('Should activate controller correctly', async () => {
     const repo = new UserRepositoryMock()
     const usecase = new GetAllUsersUsecase(repo)

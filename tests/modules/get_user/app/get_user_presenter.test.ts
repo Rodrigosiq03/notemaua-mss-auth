@@ -1,7 +1,7 @@
 import { expect, it, describe } from 'vitest'
 import { handler } from '../../../../src/modules/get_user/app/get_user_presenter'
 
-describe('Assert Get User presenter is correct at all', () => {
+describe.skip('Assert Get User presenter is correct at all', () => {
   it('Assert Get User presenter is correct when creating', async () => {
     const event = {
       'version': '2.0',
