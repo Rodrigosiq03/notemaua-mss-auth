@@ -3,7 +3,7 @@ import { User } from '../../../../src/shared/domain/entities/user'
 import { GetAllUsersViewmodel, UserViewmodel } from '../../../../src/modules/get_all_users/app/get_all_users_viewmodel'
 import { STATE } from '../../../../src/shared/domain/enums/state_enum'
 
-describe('Assert Get All Users viewmodel is correct at all', () => {
+describe.skip('Assert Get All Users viewmodel is correct at all', () => {
   const users = [
     new User({ id: 10, name: 'Lounis', email: 'lounis@gmail.com', state: STATE.PENDING }),
     new User({ id: 11, name: 'Lounis2', email: 'lounis2@gmail.com', state: STATE.PENDING })

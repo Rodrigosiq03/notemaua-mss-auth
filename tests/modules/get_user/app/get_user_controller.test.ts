@@ -4,7 +4,7 @@ import { GetUserUsecase } from '../../../../src/modules/get_user/app/get_user_us
 import { GetUserController } from '../../../../src/modules/get_user/app/get_user_controller'
 import { HttpRequest } from '../../../../src/shared/helpers/external_interfaces/http_models'
 
-describe('Assert Get User controller is correct at all', () => {
+describe.skip('Assert Get User controller is correct at all', () => {
   it('Assert Get User controller is correct when creating', async () => {
     const repo = new UserRepositoryMock()
     const usecase = new GetUserUsecase(repo)

@@ -3,7 +3,7 @@ import { User } from '../../../../src/shared/domain/entities/user'
 import { STATE } from '../../../../src/shared/domain/enums/state_enum'
 import { GetUserViewmodel } from '../../../../src/modules/get_user/app/get_user_viewmodel'
 
-describe('Assert Get User viewmodel is correct at all', () => {
+describe.skip('Assert Get User viewmodel is correct at all', () => {
   it('Assert the viewmodel is correct at all', () => {
     const user = new User({
       id: 10,

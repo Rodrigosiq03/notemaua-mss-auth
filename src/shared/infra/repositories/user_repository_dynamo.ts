@@ -5,17 +5,17 @@ import { NoItemsFound } from '../../helpers/errors/usecase_errors'
 import { UserDynamoDTO } from '../dto/user_dynamo_dto'
 import { DynamoDatasource } from '../external/dynamo/datasources/dynamo_datasource'
 import { EntityError } from '../../helpers/errors/domain_errors'
-import { STATE } from '../../domain/enums/state_enum'
 import { Environments } from '../../../shared/environments'
+import { hash } from 'bcryptjs'
 
 export class UserRepositoryDynamo implements IUserRepository {
 
-  static partitionKeyFormat(id: number): string {
-    return `user#${id}`
+  static partitionKeyFormat(ra: string): string {
+    return `user#${ra}`
   }
 
-  static sortKeyFormat(id: number): string {
-    return `#${id}`
+  static sortKeyFormat(ra: string): string {
+    return `#${ra}`
   }
 
   constructor(private dynamo: DynamoDatasource = new DynamoDatasource(
@@ -24,9 +24,9 @@ export class UserRepositoryDynamo implements IUserRepository {
     Environments.getEnvs().region, undefined, undefined, Environments.getEnvs().endpointUrl, Environments.getEnvs().dynamoSortKey
   )) {}
 
-  async getUser(id: number): Promise<User> {
+  async getUser(ra: string): Promise<User> {
     console.log('Environments.getEnvs().dynamoTableName - [GET_USER_REPO_DYNAMO] - ', Environments.getEnvs().dynamoTableName)
-    const resp = await this.dynamo.getItem(UserRepositoryDynamo.partitionKeyFormat(id), UserRepositoryDynamo.sortKeyFormat(id))
+    const resp = await this.dynamo.getItem(UserRepositoryDynamo.partitionKeyFormat(ra), UserRepositoryDynamo.sortKeyFormat(ra))
 
     if (!resp['Item']) {
       throw new NoItemsFound('id')
@@ -37,13 +37,7 @@ export class UserRepositoryDynamo implements IUserRepository {
     return Promise.resolve(userDto.toEntity())
   }
   async getAllUsers(): Promise<User[]> {
-    const filterExpression = 'attribute_not_exists(PK) OR attribute_not_exists(SK) OR (PK <> :value AND SK <> :value)'
-    const expressionAttributeValues = {
-      ':value': { S: 'COUNTER' }
-    }
-    const resp = await this.dynamo.scanItems(filterExpression, {
-      expressionAttributeValues: expressionAttributeValues
-    })
+    const resp = await this.dynamo.getAllItems()
     const users = []
 
     for (const item of resp['Items']) {
@@ -54,60 +48,52 @@ export class UserRepositoryDynamo implements IUserRepository {
     return Promise.resolve(users)
   }
   async createUser(user: User): Promise<User> {
-    if(!User.validateName(user.name)) throw new EntityError('name')
-    if(!User.validateEmail(user.email)) throw new EntityError('email')
-    if(!User.validateState(user.state as STATE)) throw new EntityError('state')
 
-    user.setId = await this.getUserCounter()
+    user.setPassword = await hash(user.password, 6)
 
     const userDto = UserDynamoDTO.fromEntity(user)
-    await this.dynamo.putItem(userDto.toDynamo(), UserRepositoryDynamo.partitionKeyFormat(user.id as number), UserRepositoryDynamo.sortKeyFormat(user.id as number))
+    await this.dynamo.putItem(userDto.toDynamo(), UserRepositoryDynamo.partitionKeyFormat(user.ra), UserRepositoryDynamo.sortKeyFormat(user.ra))
 
     return Promise.resolve(userDto.toEntity())
   }
-  async updateUser(id: number, newName: string, newEmail: string): Promise<User> {
-    if(!User.validateName(newName)) throw new EntityError('newName')
-    if(!User.validateEmail(newEmail)) throw new EntityError('newEmail')
-    await this.getUser(id)
-
+  async updateUser(ra: string, newName?: string, newEmail?: string, newPassword?: string): Promise<User> {
     const itemsToUpdate: Record<string, any> = {}
 
-    if (newName && newEmail) {
-      itemsToUpdate['name'] = newName
-      itemsToUpdate['email'] = newEmail
-    } else {
-      throw new NoItemsFound('Nothing to update')
+    switch (true) {
+      case !!newName:
+        itemsToUpdate['name'] = newName
+        break
+      case !!newEmail:
+        itemsToUpdate['email'] = newEmail
+        break
+      case !!newPassword:
+        itemsToUpdate['password'] = newPassword
+        break
+      default:
+        throw new EntityError('Nothing to update')
     }
 
-    const resp = await this.dynamo.updateItem(UserRepositoryDynamo.partitionKeyFormat(id), UserRepositoryDynamo.sortKeyFormat(id), itemsToUpdate)
+    const resp = await this.dynamo.updateItem(UserRepositoryDynamo.partitionKeyFormat(ra), UserRepositoryDynamo.sortKeyFormat(ra), itemsToUpdate)
 
     const userDto = UserDynamoDTO.fromDynamo(resp['Attributes']).toEntity()
 
     return Promise.resolve(userDto)
   }
-  async deleteUser(id: number): Promise<User> {
-    const user = await this.getUser(id)
+  async deleteUser(ra: string): Promise<User> {
+    const user = await this.getUser(ra)
 
-    await this.dynamo.deleteItem(UserRepositoryDynamo.partitionKeyFormat(id), UserRepositoryDynamo.sortKeyFormat(id))
+    if (!user) throw new NoItemsFound('ra')
+
+    await this.dynamo.deleteItem(UserRepositoryDynamo.partitionKeyFormat(ra), UserRepositoryDynamo.sortKeyFormat(ra))
 
     return Promise.resolve(user)
   }
-  async getUserCounter(): Promise<number> {
-    const number = await this.updateCounter()
-    return  number
-  }
-  async updateCounter(): Promise<number> {
-    const num = await this.dynamo.getItem('COUNTER', 'COUNTER')
-    console.log('num - [UPDATE_CONTER] - ', num)
+  async login(email: string): Promise<User> {
+    const ra = email.split('@')[0]
+    const user = await this.getUser(ra)
 
-    if (num && num.Item && num.Item.COUNTER !== undefined) {
-      const counter = Number(num['Item']['COUNTER']['N'])
+    if (!user) throw new NoItemsFound('email')
 
-      await this.dynamo.updateItem('COUNTER', 'COUNTER', { 'COUNTER': counter + 1 })
-
-      return counter + 1
-    } else {
-      throw new Error('Failed to retrieve or update the counter.')
-    }
+    return Promise.resolve(user)
   }
 }

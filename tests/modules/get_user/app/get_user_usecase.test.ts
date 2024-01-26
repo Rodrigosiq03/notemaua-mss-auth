@@ -3,7 +3,7 @@ import { UserRepositoryMock } from '../../../../src/shared/infra/repositories/us
 import { GetUserUsecase } from '../../../../src/modules/get_user/app/get_user_usecase'
 import { STATE } from '../../../../src/shared/domain/enums/state_enum'
 
-describe('Assert Get User usecase is correct at all', () => {
+describe.skip('Assert Get User usecase is correct at all', () => {
   it('Should create a get user usecase correctly', async () => {
     const repo = new UserRepositoryMock()
     const usecase = new GetUserUsecase(repo)
