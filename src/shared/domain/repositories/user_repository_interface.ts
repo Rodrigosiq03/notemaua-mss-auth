@@ -6,5 +6,5 @@ export interface IUserRepository {
   createUser(user: User): Promise<User>
   updateUser(ra: string, newName?: string, newEmail?: string, newPassword?: string): Promise<User>
   deleteUser(ra: string): Promise<User>
-  login(email: string, password: string): Promise<User>
+  login(email: string): Promise<User>
 }

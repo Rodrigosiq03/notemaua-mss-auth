@@ -70,14 +70,11 @@ export class UserRepositoryMock implements IUserRepository {
     return user
   }
 
-  async login(email: string, password: string): Promise<User> {
+  async login(email: string): Promise<User> {
     const ra = email.split('@')[0]
     const user = this.users.find(user => user.ra === ra)
     if (!user) {
       throw new NoItemsFound('ra')
-    }
-    if (user.props.password !== password) {
-      throw new Error('Incorrect password')
     }
     return user
   }
