@@ -1,21 +1,20 @@
 import { User } from '../../domain/entities/user'
-import { STATE } from '../../domain/enums/state_enum'
 import { IUserRepository } from '../../domain/repositories/user_repository_interface'
 import { NoItemsFound } from '../../helpers/errors/usecase_errors'
 
 export class UserRepositoryMock implements IUserRepository {
   private users: User[] = [
     new User({
-      id: 1,
+      ra: '22.00000-0',
       name: 'user1',
       email: 'user1@gmail.com',
-      state: STATE.PENDING
+      password: 'Teste123$'
     }),
     new User({
-      id: 2,
+      ra: '22.11111-1',
       name: 'user2',
       email: 'user2@gmail.com',
-      state: STATE.PENDING
+      password: 'Teste123$'
     }),
   ]
 
@@ -23,12 +22,10 @@ export class UserRepositoryMock implements IUserRepository {
     return this.users.length
   }
 
-  private userCounter: number = 2
-
-  async getUser(id: number): Promise<User> {
-    const user = this.users.find(user => user.id === id)
+  async getUser(ra: string): Promise<User> {
+    const user = this.users.find(user => user.ra === ra)
     if (!user) {
-      throw new NoItemsFound('id')
+      throw new NoItemsFound('ra')
     }
     return user
   }
@@ -38,30 +35,50 @@ export class UserRepositoryMock implements IUserRepository {
   }
 
   async createUser(user: User): Promise<User> {
+    const { ra } = user.props
+    const userExists = this.users.find(user => user.ra === ra)
+    if (userExists) {
+      throw new Error('User already exists')
+    }
     this.users.push(user)
     return user
   }
 
-  async updateUser(id: number, newName: string, newEmail: string): Promise<User> {
-    const user = this.users.find(user => user.id === id)
+  async updateUser(ra: string, newName?: string, newEmail?: string, newPassword?: string): Promise<User> {
+    const user = this.users.find(user => user.ra === ra)
     if (!user) {
-      throw new NoItemsFound('id')
+      throw new NoItemsFound('ra')
     }
-    user.setName = newName
-    user.setEmail = newEmail
+    if (newName) {
+      user.props.name = newName
+    }
+    if (newEmail) {
+      user.props.email = newEmail
+    }
+    if (newPassword) {
+      user.props.password = newPassword
+    }
     return user
   }
 
-  async deleteUser(id: number): Promise<User> {
-    const user = this.users.find(user => user.id === id)
+  async deleteUser(ra: string): Promise<User> {
+    const user = this.users.find(user => user.ra === ra)
     if (!user) {
-      throw new NoItemsFound('id')
+      throw new NoItemsFound('ra')
     }
-    this.users = this.users.filter(user => user.id !== id)
+    this.users = this.users.filter(user => user.ra !== ra)
     return user
   }
 
-  async getUserCounter(): Promise<number> {
-    return this.userCounter
+  async login(email: string, password: string): Promise<User> {
+    const ra = email.split('@')[0]
+    const user = this.users.find(user => user.ra === ra)
+    if (!user) {
+      throw new NoItemsFound('ra')
+    }
+    if (user.props.password !== password) {
+      throw new Error('Incorrect password')
+    }
+    return user
   }
 }
