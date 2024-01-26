@@ -13,5 +13,6 @@ declare namespace NodeJS {
     MSS_NAME: string
     S3_BUCKET_NAME: string
     CLOUD_FRONT_DISTRIBUTION_DOMAIN: string
+    JWT_SECRET: string
   }
 }
