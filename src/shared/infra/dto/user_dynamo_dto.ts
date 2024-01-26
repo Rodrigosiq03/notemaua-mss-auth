@@ -1,65 +1,74 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ROLE } from '@/shared/domain/enums/role_enum'
 import { User } from '../../domain/entities/user'
-import { STATE } from '../../domain/enums/state_enum'
 
 type UserDynamoDTOProps = {
-  id: string
+  ra: string
   name: string
   email: string
-  state: STATE
+  role: ROLE
+  password: string
 }
 
 export class UserDynamoDTO {
-  private id: string
+  private ra: string
   private name: string
   private email: string
-  private state: STATE
+  private role: ROLE
+  private password: string
 
   constructor (props: UserDynamoDTOProps) {
-    this.id = props.id
+    this.ra = props.ra
     this.name = props.name
     this.email = props.email
-    this.state = props.state
+    this.role = props.role
+    this.password = props.password
   }
 
   static fromEntity(user: User): UserDynamoDTO {
     return new UserDynamoDTO({
-      id: user.id.toString(),
+      ra: user.ra,
       name: user.name,
       email: user.email,
-      state: user.state as STATE
+      role: user.role as ROLE,
+      password: user.password
     })
   }
 
   toDynamo() {
     return {
       'entity': 'user',
-      'id': this.id,
+      'ra': this.ra,
       'name': this.name,
       'email': this.email,
-      'state': this.state,
+      'role': this.role,
+      'password': this.password,
     }
   }
 
   static fromDynamo(userData: any) {
-    const id = userData['id'] && userData['id']['S'] ? userData['id']['S'] : null
+    const ra = userData['ra'] && userData['ra']['S'] ? userData['ra']['S'] : null
     const name = userData['name'] && userData['name']['S'] ? userData['name']['S'] : null
     const email = userData['email'] && userData['email']['S'] ? userData['email']['S'] : null
-    const state = userData['state'] && userData['state']['S'] ? userData['state']['S'] : null
+    const role = userData['role'] && userData['role']['S'] ? userData['role']['S'] : null
+    const password = userData['password'] && userData['password']['S'] ? userData['password']['S'] : null
+
     return new UserDynamoDTO({
-      id,
+      ra,
       name,
       email,
-      state
+      role,
+      password
     })
   }
 
   toEntity() {
     return new User({
-      id: Number(this.id),
+      ra: this.ra,
       name: this.name,
       email: this.email,
-      state: this.state
+      role: this.role,
+      password: this.password
     })
   }
 }

@@ -1,17 +1,18 @@
 import { describe, it, expect } from 'vitest'
 import { UserRepositoryMock } from '../../../../src/shared/infra/repositories/user_repository_mock'
 import { UserDynamoDTO } from '../../../../src/shared/infra/dto/user_dynamo_dto'
-import { STATE } from '../../../../src/shared/domain/enums/state_enum'
+import { ROLE } from '../../../../src/shared/domain/enums/role_enum'
 
 describe('Assert User Dynamo DTO is correct at all', () => {
   it('Should get user dto correctly', async () => {
     const repo = new UserRepositoryMock()
-    const user = await repo.getUser(1)
+    const user = await repo.getUser('22.00000-0')
     const expectedDto = new UserDynamoDTO({
-      id: user?.id.toString(),
+      ra: user?.ra,
       name: user?.name,
       email: user?.email,
-      state: user?.state as STATE
+      role: user?.role as ROLE,
+      password: user?.password
     })
 
     const fromEntity = UserDynamoDTO.fromEntity(user)
@@ -20,32 +21,35 @@ describe('Assert User Dynamo DTO is correct at all', () => {
   })
   it('Should get a to dynamo dto correctly', async () => {
     const repo = new UserRepositoryMock()
-    const user = await repo.getUser(1)
+    const user = await repo.getUser('22.00000-0')
     const userDto = new UserDynamoDTO({
-      id: user?.id.toString(),
+      ra: user?.ra,
       name: user?.name,
       email: user?.email,
-      state: user?.state as STATE
+      role: user?.role as ROLE,
+      password: user?.password
     })
     const userDynamo = userDto.toDynamo()
     const expectedDynamo = {
       'entity': 'user',
-      'id': user?.id.toString(),
+      'ra': user?.ra,
       'name': user?.name,
       'email': user?.email,
-      'state': user?.state
+      'role': user?.role,
+      'password': user?.password,
     }
 
     expect(userDynamo).toEqual(expectedDynamo)
   })
   it('Should get a correctly user from dynamo dto', async () => {
-    const dynamo_dict = {'Item': {'id': { 'S': '1'},
+    const dynamo_dict = {'Item': {'ra': { 'S': '22.00000-0'},
       'name': { 'S': 'user1'},
       'SK': { 'S': '#1'},
-      'state': { 'S': 'PENDING'},
+      'role': { 'S': 'STUDENT'},
       'PK': { 'S': 'user#1' },
       'entity': { 'S': 'user' },
-      'email': { 'S': 'user1@gmail.com'}},
+      'email': { 'S': 'user1@gmail.com'},
+      'password': { 'S': 'Teste123$' }},
     'ResponseMetadata': {'RequestId': 'aa6a5e5e-943f-4452-8c1f-4e5441ee6042',
       'HTTPStatusCode': 200,
       'HTTPHeaders': {'date': 'Fri, 16 Dec 2022 15:40:29 GMT',
@@ -58,22 +62,24 @@ describe('Assert User Dynamo DTO is correct at all', () => {
     
     const user = UserDynamoDTO.fromDynamo(dynamo_dict['Item'])
     const expectedUser = new UserDynamoDTO({
-      id: '1',
+      ra: '22.00000-0',
       name: 'user1',
       email: 'user1@gmail.com',
-      state: STATE.PENDING
+      role: ROLE.STUDENT,
+      password: 'Teste123$'
     })
 
     expect(user).toEqual(expectedUser)
   })
   it('Should get a correctly to entity', async () => {
     const repo = new UserRepositoryMock()
-    const userRepo = await repo.getUser(1)
+    const userRepo = await repo.getUser('22.00000-0')
     const userDto = new UserDynamoDTO({
-      id: userRepo?.id.toString(),
+      ra: userRepo?.ra,
       name: userRepo?.name,
       email: userRepo?.email,
-      state: userRepo?.state as STATE
+      role: userRepo?.role as ROLE,
+      password: userRepo?.password
     }) 
 
     const user = userDto.toEntity()
@@ -81,34 +87,36 @@ describe('Assert User Dynamo DTO is correct at all', () => {
     expect(user).toEqual(userRepo)
   })
   it('Should get a correctly from dynamo to entity', async () => {
-    const dynamo_item = {'Item': {'id': { 'S': '1'},
+    const dynamo_item = {'Item': {'ra': { 'S': '22.00000-0'},
       'name': { 'S': 'user1'},
       'SK': { 'S': '#1'},
-      'state': { 'S': 'PENDING'},
+      'role': { 'S': 'STUDENT'},
       'PK': { 'S': 'user#1' },
       'entity': { 'S': 'user' },
-      'email': { 'S': 'user1@gmail.com'}}
+      'email': { 'S': 'user1@gmail.com'},
+      'password': { 'S': 'Teste123$' }}
     }
 
     const userDto = UserDynamoDTO.fromDynamo(dynamo_item['Item'])
     const user = userDto.toEntity()
 
     const repo = new UserRepositoryMock()
-    const userRepo = await repo.getUser(1)
+    const userRepo = await repo.getUser('22.00000-0')
 
     expect(user).toEqual(userRepo)
   })
   it('Should get a correctly from entity to dynamo', async () => {
     const repo = new UserRepositoryMock()
-    const userRepo = await repo.getUser(1)
+    const userRepo = await repo.getUser('22.00000-0')
     const userDto = UserDynamoDTO.fromEntity(userRepo)
     const userDynamo = userDto.toDynamo()
     const expectedDynamo = {
       'entity': 'user',
-      'id': userRepo?.id.toString(),
+      'ra': userRepo?.ra,
       'name': userRepo?.name,
       'email': userRepo?.email,
-      'state': userRepo?.state
+      'role': userRepo?.role,
+      'password': userRepo?.password,
     }
 
     expect(userDynamo).toEqual(expectedDynamo)
