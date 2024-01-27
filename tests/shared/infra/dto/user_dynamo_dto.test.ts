@@ -93,8 +93,8 @@ describe('Assert User Dynamo DTO is correct at all', () => {
       'role': { 'S': 'STUDENT'},
       'PK': { 'S': 'user#1' },
       'entity': { 'S': 'user' },
-      'email': { 'S': 'user1@gmail.com'},
-      'password': { 'S': 'Teste123$' }}
+      'email': { 'S': '22.00000-0@maua.br'},
+      'password': { 'S': '$2a$06$eZD/Cu7rW77o.FM1EsEne.pHe9IQOeVICkbbtrXZkJjJh8rih1nJ.' }}
     }
 
     const userDto = UserDynamoDTO.fromDynamo(dynamo_item['Item'])

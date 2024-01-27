@@ -25,7 +25,7 @@ describe('Assert User Repository Mock is correct at all', () => {
     if (user) {
       expect(user.ra).toEqual('22.00000-0')
       expect(user.name).toEqual('user1')
-      expect(user.email).toEqual('user1@gmail.com')
+      expect(user.email).toEqual('22.00000-0@maua.br')
       expect(user.role).toEqual(ROLE.STUDENT)
     }
   })
