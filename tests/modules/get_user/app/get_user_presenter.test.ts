@@ -1,7 +1,7 @@
 import { expect, it, describe } from 'vitest'
 import { handler } from '../../../../src/modules/get_user/app/get_user_presenter'
 
-describe.skip('Assert Get User presenter is correct at all', () => {
+describe('Assert Get User presenter is correct at all', () => {
   it('Assert Get User presenter is correct when creating', async () => {
     const event = {
       'version': '2.0',
@@ -17,7 +17,7 @@ describe.skip('Assert Get User presenter is correct at all', () => {
         'header2': 'value1,value2'
       },
       'queryStringParameters': {
-        'id': '1'
+        'ra': '22.00000-0'
       },
       'requestContext': {
         'accountId': '123456789012',
@@ -58,9 +58,9 @@ describe.skip('Assert Get User presenter is correct at all', () => {
     const response = await handler(event, null)
 
     expect(response?.statusCode).toEqual(200)
-    expect(JSON.parse(response?.body)['id']).toEqual(1)
+    expect(JSON.parse(response?.body)['ra']).toEqual('22.00000-0')
     expect(JSON.parse(response?.body)['name']).toEqual('user1')
-    expect(JSON.parse(response?.body)['email']).toEqual('user1@gmail.com')
-    expect(JSON.parse(response?.body)['state']).toEqual('PENDING')
+    expect(JSON.parse(response?.body)['email']).toEqual('22.00000-0@maua.br')
+    expect(JSON.parse(response?.body)['role']).toEqual('STUDENT')
   })
 })

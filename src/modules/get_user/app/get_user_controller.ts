@@ -12,14 +12,14 @@ export class GetUserController {
 
   async handle(request: IRequest) {
     try {
-      if (request.data.id === undefined) {
-        throw new MissingParameters('id')
+      if (request.data.ra === undefined) {
+        throw new MissingParameters('ra')
       }
-      if (typeof request.data.id !== 'string') {
-        throw new WrongTypeParameters('id', 'string', typeof request.data.id)
+      if (typeof request.data.ra !== 'string') {
+        throw new WrongTypeParameters('ra', 'string', typeof request.data.ra)
       }
 
-      const user = await this.usecase.execute(Number(request.data.id))
+      const user = await this.usecase.execute(request.data.ra)
 
       const viewmodel = new GetUserViewmodel(user)
 
