@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { handler } from '../../../../src/modules/get_all_users/app/get_all_users_presenter'
 
-describe.skip('Assert Get All Users presenter is correct at all', () => {
+describe('Assert Get All Users presenter is correct at all', () => {
   it('Should activate presenter correctly', async () => {
     const event = {
       'version': '2.0',
@@ -59,16 +59,16 @@ describe.skip('Assert Get All Users presenter is correct at all', () => {
       'message': 'All users have been retrieved successfully',
       'users': [
         {
-          'id': 1,
+          'ra': '22.00000-0',
           'name': 'user1',
-          'email': 'user1@gmail.com',
-          'state': 'PENDING',
+          'email': '22.00000-0@maua.br',
+          'role': 'STUDENT',
         },
         {
-          'id': 2,
+          'ra': '22.11111-1',
           'name': 'user2',
-          'email': 'user2@gmail.com',
-          'state': 'PENDING',
+          'email': '22.11111-1@maua.br',
+          'role': 'STUDENT',
         },
       ],
     }

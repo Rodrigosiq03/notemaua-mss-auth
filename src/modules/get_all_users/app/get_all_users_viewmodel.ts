@@ -1,25 +1,26 @@
 import { User } from '../../../shared/domain/entities/user'
+import { ROLE } from '../../../shared/domain/enums/role_enum'
 import { STATE } from '../../../shared/domain/enums/state_enum'
 
 export class UserViewmodel {
-  private id: number
+  private ra: string
   private name: string
   private email: string
-  private state: STATE
+  private role: ROLE
 
   constructor(user: User) {
-    this.id = user.id
+    this.ra = user.ra
     this.name = user.name
     this.email = user.email
-    this.state = user.state as STATE
+    this.role = user.role as ROLE
   }
 
   toJSON() {
     return {
-      'id': this.id,
+      'ra': this.ra,
       'name': this.name,
       'email': this.email,
-      'state': this.state,
+      'role': this.role,
     }
   }
 }
