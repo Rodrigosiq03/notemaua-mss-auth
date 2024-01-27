@@ -15,7 +15,10 @@ const envs = {
   MSS_NAME: process.env.MSS_NAME,
   S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
   CLOUD_FRONT_DISTRIBUTION_DOMAIN: process.env.CLOUD_FRONT_DISTRIBUTION_DOMAIN,
-  JWT_SECRET: process.env.JWT_SECRET
+  JWT_SECRET: process.env.JWT_SECRET,
+  FIRST_ACCESS_PASSWORD: process.env.FIRST_ACCESS_PASSWORD,
+  MAIL_USER: process.env.MAIL_USER,
+  MAIL_PASSWORD: process.env.MAIL_PASSWORD
 }
 
 export default envs
