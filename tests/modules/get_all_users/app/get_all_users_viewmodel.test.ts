@@ -2,11 +2,12 @@ import { describe, it, expect } from 'vitest'
 import { User } from '../../../../src/shared/domain/entities/user'
 import { GetAllUsersViewmodel, UserViewmodel } from '../../../../src/modules/get_all_users/app/get_all_users_viewmodel'
 import { STATE } from '../../../../src/shared/domain/enums/state_enum'
+import { ROLE } from '../../../../src/shared/domain/enums/role_enum'
 
 describe.skip('Assert Get All Users viewmodel is correct at all', () => {
   const users = [
-    new User({ id: 10, name: 'Lounis', email: 'lounis@gmail.com', state: STATE.PENDING }),
-    new User({ id: 11, name: 'Lounis2', email: 'lounis2@gmail.com', state: STATE.PENDING })
+    new User({ ra: '22.00000-0', email: '22.00000-0@maua.br', name: 'user1', password: 'Teste123$', role: ROLE.STUDENT }),
+    new User({ ra: '22.11111-1', email: '22.11111-1@maua.br', name: 'user2', password: 'Teste123$', role: ROLE.STUDENT })
   ]
 
   it('Should activate GetAllUsers viewmodel correctly', async () => {
