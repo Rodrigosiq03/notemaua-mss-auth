@@ -38,11 +38,12 @@ export class UserRepositoryDynamo implements IUserRepository {
   }
   async getAllUsers(): Promise<User[]> {
     const resp = await this.dynamo.getAllItems()
-    const users = []
+    const users: User[] = []
 
     for (const item of resp['Items']) {
       const userDto = UserDynamoDTO.fromDynamo(item)
-      users.push(userDto.toEntity())
+      const user = userDto.toEntity()
+      users.push(user)
     }
 
     return Promise.resolve(users)
