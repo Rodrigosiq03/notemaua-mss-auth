@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { handler } from '../../../../src/modules/update_user/app/update_user_presenter'
 
-describe.skip('Assert Update User presenter is correct at all', () => {
+describe('Assert Update User presenter is correct at all', () => {
   it('Should activate presenter correctly', async () => {
     const event = {
       'version': '2.0',
@@ -49,7 +49,7 @@ describe.skip('Assert Update User presenter is correct at all', () => {
         'time': '12/Mar/2020:19:03:58 +0000',
         'timeEpoch': 1583348638390
       },
-      'body': '{"id": "1", "name": "usuario1", "email": "usuario1@gmail.com"}',
+      'body': {'ra': '22.00000-0', 'name': 'usuario1', 'email': 'usuario1@gmail.com'},
       'pathParameters': null,
       'isBase64Encoded': null,
       'stageVariables': null
@@ -58,10 +58,11 @@ describe.skip('Assert Update User presenter is correct at all', () => {
     const response = await handler(event, null)
 
     expect(response?.statusCode).toEqual(200)
-    expect(JSON.parse(response?.body)['id']).toEqual(1)
+    expect(JSON.parse(response?.body)['ra']).toEqual('22.00000-0')
     expect(JSON.parse(response?.body)['name']).toEqual('usuario1')
     expect(JSON.parse(response?.body)['email']).toEqual('usuario1@gmail.com')
-    expect(JSON.parse(response?.body)['state']).toEqual('PENDING')
+    expect(JSON.parse(response?.body)['role']).toEqual('STUDENT')
+    expect(JSON.parse(response?.body)['message']).toEqual('The user was updated successfully')
 
   })
 })

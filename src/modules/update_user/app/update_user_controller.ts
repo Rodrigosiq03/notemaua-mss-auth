@@ -12,28 +12,35 @@ export class UpdateUserController {
 
   async handle(request: IRequest) {
     try {
-      if (request.data.id === undefined) {
-        throw new MissingParameters('id')
+      if (!request.data.ra) {
+        throw new MissingParameters('ra')
       }
-      if (request.data.name === undefined) {
-        throw new MissingParameters('name')
+      if (typeof request.data.ra !== 'string') {
+        throw new WrongTypeParameters('ra', 'string', typeof request.data.ra) 
       }
-      if (request.data.email === undefined) {
-        throw new MissingParameters('email')
-      }
-      if (typeof request.data.id !== 'string') {
-        throw new WrongTypeParameters('id', 'string', typeof request.data.id)
-      }
-      if (typeof request.data.name !== 'string') {
+
+      if (request.data.name && typeof request.data.name !== 'string') {
         throw new WrongTypeParameters('name', 'string', typeof request.data.name)
       }
-      if (typeof request.data.email !== 'string') {
+
+      if (request.data.email && typeof request.data.email !== 'string') {
         throw new WrongTypeParameters('email', 'string', typeof request.data.email)
       }
 
-      const user = await this.usecase.execute(Number(request.data.id), request.data.name, request.data.email)
+      if (request.data.password && typeof request.data.password !== 'string') {
+        throw new WrongTypeParameters('password', 'string', typeof request.data.password)
+      }
 
+      const { ra, name, email, password } = request.data
+
+      const user = await this.usecase.execute(ra as any, name as any, email as any, password as any)
       const viewmodel = new UpdateUserViewmodel(user)
+
+      if (!name && !email && password) {
+        const response = new OK(viewmodel.toJSON(true))
+
+        return response
+      }
 
       const response = new OK(viewmodel.toJSON())
 
