@@ -6,7 +6,7 @@ export type UserProps = {
   name: string;
   email: string;
   role?: ROLE;
-  password: string;
+  password?: string;
 }
 
 export type JsonProps = {
@@ -14,7 +14,7 @@ export type JsonProps = {
   name: string;
   email: string;
   role?: string;
-  password: string;
+  password?: string;
 }
 
 export class User {
@@ -169,11 +169,11 @@ export class User {
     return true
   }
 
-  static validatePassword(password: string): boolean {
+  static validatePassword(password?: string): boolean {
     const regexp = '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])'
 
-    if (password == null) {
-      return false
+    if (password == null || password == undefined) {
+      return true
     } else if (typeof(password) != 'string') {
       return false
     } else if (password.length < 6) {

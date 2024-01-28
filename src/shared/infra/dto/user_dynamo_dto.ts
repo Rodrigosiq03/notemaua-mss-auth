@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ROLE } from '@/shared/domain/enums/role_enum'
+import { ROLE } from '../../../shared/domain/enums/role_enum'
 import { User } from '../../domain/entities/user'
 
 type UserDynamoDTOProps = {
@@ -7,7 +7,7 @@ type UserDynamoDTOProps = {
   name: string
   email: string
   role: ROLE
-  password: string
+  password?: string
 }
 
 export class UserDynamoDTO {
@@ -15,7 +15,7 @@ export class UserDynamoDTO {
   private name: string
   private email: string
   private role: ROLE
-  private password: string
+  private password?: string
 
   constructor (props: UserDynamoDTOProps) {
     this.ra = props.ra

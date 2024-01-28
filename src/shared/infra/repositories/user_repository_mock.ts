@@ -1,7 +1,7 @@
 import { hash } from 'bcryptjs'
 import { User } from '../../domain/entities/user'
 import { IUserRepository } from '../../domain/repositories/user_repository_interface'
-import { NoItemsFound } from '../../helpers/errors/usecase_errors'
+import { DuplicatedItem, NoItemsFound } from '../../helpers/errors/usecase_errors'
 
 export class UserRepositoryMock implements IUserRepository {
   private users: User[] = [
@@ -38,14 +38,14 @@ export class UserRepositoryMock implements IUserRepository {
   }
 
   async createUser(user: User): Promise<User> {
-    const { ra } = user.props
+    const { ra, password } = user.props
     const userExists = this.users.find(user => user.ra === ra)
 
     if (userExists) {
-      throw new Error('User already exists')
+      throw new DuplicatedItem('ra')
     }
 
-    user.setPassword = await hash(user.password, 6)
+    if (password) user.setPassword = await hash(password, 6)
 
     this.users.push(user)
 

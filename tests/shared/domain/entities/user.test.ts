@@ -8,7 +8,6 @@ describe('[User Entity Tests]', () => {
       ra: '22.00680-0',
       name: 'Rodrigo Siqueira',
       email: 'rodrigo.dsiqueira1@gmail.com',
-      password: 'Teste123$'
     })
 
     expect(user).toBeInstanceOf(User)
@@ -20,8 +19,6 @@ describe('[User Entity Tests]', () => {
         ra: '22.00680-0',
         name: '',
         email: 'rodrigo.dsiqueira1@gmail.com',
-        password: 'Teste123$'
-        
       })
     }).toThrowError(EntityError)
     expect(() => {
@@ -29,7 +26,6 @@ describe('[User Entity Tests]', () => {
         ra: '22.00680-0',
         name: '',
         email: 'rodrigo.dsiqueira1@gmail.com',
-        password: 'Teste123$'
       })
     }).toThrowError('Field props.name is not valid')
   })
@@ -39,7 +35,6 @@ describe('[User Entity Tests]', () => {
         ra: '22.00680-0',
         name: 'Rodrigo Diana Siqueira',
         email: 'rodrigo.dsiqueira1',
-        password: 'Teste123$'
       })
     }).toThrowError(EntityError)
     expect(() => {
@@ -47,7 +42,6 @@ describe('[User Entity Tests]', () => {
         ra: '22.00680-0',
         name: 'Rodrigo Diana Siqueira',
         email: 'rodrigo.dsiqueira1',
-        password: 'Teste123$'
       })
     }).toThrowError('Field props.email is not valid')
   })
@@ -57,7 +51,6 @@ describe('[User Entity Tests]', () => {
         ra: '22.00680',
         name: 'Rodrigo Diana Siqueira',
         email: 'rodrigo.dsiqueira1@gmail.com',
-        password: 'Teste123$'
       })
     }).toThrowError(EntityError)
     expect(() => {
@@ -65,7 +58,6 @@ describe('[User Entity Tests]', () => {
         ra: '22.00680',
         name: 'Rodrigo Diana Siqueira',
         email: 'rodrigo.dsiqueira1@gmail.com',
-        password: 'Teste123$'
       })
     }).toThrowError('Field props.ra is not valid')
   })

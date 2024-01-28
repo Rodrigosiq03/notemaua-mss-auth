@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from '../../domain/entities/user'
 import { IUserRepository } from '../../domain/repositories/user_repository_interface'
-import { NoItemsFound } from '../../helpers/errors/usecase_errors'
+import { DuplicatedItem, NoItemsFound } from '../../helpers/errors/usecase_errors'
 import { UserDynamoDTO } from '../dto/user_dynamo_dto'
 import { DynamoDatasource } from '../external/dynamo/datasources/dynamo_datasource'
 import { EntityError } from '../../helpers/errors/domain_errors'
@@ -49,8 +49,14 @@ export class UserRepositoryDynamo implements IUserRepository {
     return Promise.resolve(users)
   }
   async createUser(user: User): Promise<User> {
+    const { ra, password } = user.props
+    const userExists = await this.getUser(ra)
 
-    user.setPassword = await hash(user.password, 6)
+    if (userExists) {
+      throw new DuplicatedItem('ra')
+    }
+
+    if (password) user.setPassword = await hash(password, 6)
 
     const userDto = UserDynamoDTO.fromEntity(user)
     await this.dynamo.putItem(userDto.toDynamo(), UserRepositoryDynamo.partitionKeyFormat(user.ra), UserRepositoryDynamo.sortKeyFormat(user.ra))
