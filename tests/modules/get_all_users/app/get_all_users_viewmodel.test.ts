@@ -4,7 +4,7 @@ import { GetAllUsersViewmodel, UserViewmodel } from '../../../../src/modules/get
 import { STATE } from '../../../../src/shared/domain/enums/state_enum'
 import { ROLE } from '../../../../src/shared/domain/enums/role_enum'
 
-describe.skip('Assert Get All Users viewmodel is correct at all', () => {
+describe('Assert Get All Users viewmodel is correct at all', () => {
   const users = [
     new User({ ra: '22.00000-0', email: '22.00000-0@maua.br', name: 'user1', password: 'Teste123$', role: ROLE.STUDENT }),
     new User({ ra: '22.11111-1', email: '22.11111-1@maua.br', name: 'user2', password: 'Teste123$', role: ROLE.STUDENT })
@@ -16,16 +16,16 @@ describe.skip('Assert Get All Users viewmodel is correct at all', () => {
     const expected = {
       'users': [
         {
-          'id': 10,
-          'name': 'Lounis',
-          'email': 'lounis@gmail.com',
-          'state': 'PENDING',
+          'ra': '22.00000-0',
+          'name': 'user1',
+          'email': '22.00000-0@maua.br',
+          'role': 'STUDENT',
         },
         {
-          'id': 11,
-          'name': 'Lounis2',
-          'email': 'lounis2@gmail.com',
-          'state': 'PENDING',
+          'ra': '22.11111-1',
+          'name': 'user2',
+          'email': '22.11111-1@maua.br',
+          'role': 'STUDENT'
         },
       ],
       'message': 'All users have been retrieved successfully',
@@ -38,10 +38,10 @@ describe.skip('Assert Get All Users viewmodel is correct at all', () => {
     const viewmodel = new UserViewmodel(users[0])
 
     const expected = {
-      'id': 10,
-      'name': 'Lounis',
-      'email': 'lounis@gmail.com',
-      'state': 'PENDING',
+      'ra': '22.00000-0',
+      'name': 'user1',
+      'email': '22.00000-0@maua.br',
+      'role': 'STUDENT',
     }
 
     expect(viewmodel.toJSON()).toEqual(expected)

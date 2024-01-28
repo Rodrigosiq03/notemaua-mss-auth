@@ -1,6 +1,5 @@
 import { User } from '../../../shared/domain/entities/user'
 import { ROLE } from '../../../shared/domain/enums/role_enum'
-import { STATE } from '../../../shared/domain/enums/state_enum'
 
 export class UserViewmodel {
   private ra: string
