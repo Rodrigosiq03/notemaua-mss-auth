@@ -1,25 +1,42 @@
 import { describe, it, expect } from 'vitest'
 import { UpdateUserViewmodel } from '../../../../src/modules/update_user/app/update_user_viewmodel'
 import { User } from '../../../../src/shared/domain/entities/user'
-import { STATE } from '../../../../src/shared/domain/enums/state_enum'
 
-describe.skip('Assert Update User viewmodel is correct at all', () => {
+describe('Assert Update User viewmodel is correct at all', () => {
   it('Should activate viewmodel correctly', async () => {
     const user = new User({
-      id: 10,
+      ra: '22.00000-0',
       name: 'user10',
       email: 'user10@gmail.com',
-      state: STATE.PENDING
+      password: 'Teste123$'
     })
 
     const userViewmodel = new UpdateUserViewmodel(user.props).toJSON()
 
     expect(userViewmodel).toEqual({
-      'id': 10,
+      'ra': '22.00000-0',
       'name': 'user10',
       'email': 'user10@gmail.com',
-      'state': 'PENDING',
+      'role': 'STUDENT',
       'message': 'The user was updated successfully'
+    })
+  })
+  it('Should activate viewmodel for password updated correctly', async () => {
+    const user = new User({
+      ra: '22.00000-0',
+      name: 'user10',
+      email: 'user10@gmail.com',
+      password: 'Teste123$'
+    })
+
+    const userViewmodel = new UpdateUserViewmodel(user.props).toJSON(true)
+
+    expect(userViewmodel).toEqual({
+      'ra': '22.00000-0',
+      'name': 'user10',
+      'email': 'user10@gmail.com',
+      'role': 'STUDENT',
+      'message': 'Your password was updated successfully'
     })
   })
 })
