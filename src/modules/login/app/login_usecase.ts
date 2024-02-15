@@ -3,6 +3,7 @@ import { IUserRepository } from '../../../shared/domain/repositories/user_reposi
 import { EntityError } from '../../../shared/helpers/errors/domain_errors'
 import { User } from '../../../shared/domain/entities/user'
 import { NoItemsFound } from '../../../shared/helpers/errors/usecase_errors'
+import { PasswordDoesNotMatchError } from '../../../shared/helpers/errors/login_errors'
 
 export class LoginUsecase {
   constructor(private repo: IUserRepository) {}
@@ -20,7 +21,7 @@ export class LoginUsecase {
     const doesPasswordMatches = await compare(password, user.password)
 
     if (!doesPasswordMatches) {
-      throw new Error('Password does not match')
+      throw new PasswordDoesNotMatchError()
     }
 
     return user

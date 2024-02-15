@@ -8,6 +8,7 @@ import { NoItemsFound } from '../../../shared/helpers/errors/usecase_errors'
 import { MissingParameters, WrongTypeParameters } from '../../../shared/helpers/errors/controller_errors'
 import { EntityError } from '../../../shared/helpers/errors/domain_errors'
 import { sendFirstAccessMail } from '../../../shared/services/send_mail'
+import { PasswordDoesNotMatchError } from '../../../shared/helpers/errors/login_errors'
 
 export class LoginController {
   constructor(private usecase: LoginUsecase) {}
@@ -54,6 +55,9 @@ export class LoginController {
         return new BadRequest(error.message)
       }
       if (error instanceof WrongTypeParameters) {
+        return new BadRequest(error.message)
+      }
+      if (error instanceof PasswordDoesNotMatchError) {
         return new BadRequest(error.message)
       }
       if (error instanceof EntityError) {
