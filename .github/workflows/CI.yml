@@ -22,4 +22,4 @@ jobs:
       - name: Build
         run: yarn build
       - name: Test (Vitest)
-        run: yarn test --no-watch --no-progress --coverage
+        run: yarn test --no-watch
