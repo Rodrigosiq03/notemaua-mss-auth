@@ -2,24 +2,15 @@ import { UserProps } from '../../../shared/domain/entities/user'
 import { STATE } from '../../../shared/domain/enums/state_enum'
 
 export class DeleteUserViewmodel {
-  private id: number
-  private name: string
-  private email: string
-  private state: STATE
+  private ra: string
 
   constructor(props: UserProps) {
-    this.id = props.id
-    this.name = props.name
-    this.email = props.email
-    this.state = props.state as STATE
+    this.ra = props.ra
   }
 
   toJSON() {
     return {
-      'id': this.id,
-      'name': this.name,
-      'email': this.email,
-      'state': this.state,
+      'ra': this.ra,
       'message': 'The user was deleted successfully'
     }
   }

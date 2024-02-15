@@ -5,6 +5,7 @@ import { LoginController } from '../../../../src/modules/login/app/login_control
 import { HttpRequest } from '../../../../src/shared/helpers/external_interfaces/http_models'
 import { EntityError } from '../../../../src/shared/helpers/errors/domain_errors'
 import { MissingParameters, WrongTypeParameters } from '../../../../src/shared/helpers/errors/controller_errors'
+import { PasswordDoesNotMatchError } from '../../../../src/shared/helpers/errors/login_errors'
 
 describe('Assert Login controller is correct at all', () => {
   it('Should login a user correctly', async () => {
@@ -30,7 +31,7 @@ describe('Assert Login controller is correct at all', () => {
     const response = await controller.handle(request)
 
     expect(response?.statusCode).toEqual(400)
-    expect(response?.body).toEqual(new EntityError('password').message)
+    expect(response?.body).toEqual(new PasswordDoesNotMatchError().message)
   })
   it('Should not login a user with wrong email', async () => {
     const repo = new UserRepositoryMock()
