@@ -1,19 +1,15 @@
 import { describe, it, expect } from 'vitest'
 import { User } from '../../../../src/shared/domain/entities/user'
-import { STATE } from '../../../../src/shared/domain/enums/state_enum'
 import { DeleteUserViewmodel } from '../../../../src/modules/delete_user/app/delete_user_viewmodel'
 
-describe.skip('Assert Delete User viewmodel is correct at all', () => {
+describe('Assert Delete User viewmodel is correct at all', () => {
   it('Should activate viewmodel correctly', async () => {
-    const user = new User({ id: 10, name: 'usuario1', email: 'usuario1@gmail.com', state: STATE.PENDING })
+    const user = new User({ ra: '22.00680-0', name: 'usuario1', email: '22.00680-0@maua.br', })
 
     const viewmodel = new DeleteUserViewmodel(user)
 
     const expected = {
-      'id': 10,
-      'name': 'usuario1',
-      'email': 'usuario1@gmail.com',
-      'state': 'PENDING',
+      'ra': '22.00680-0',
       'message': 'The user was deleted successfully'
     }
 
