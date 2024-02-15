@@ -26,8 +26,8 @@ describe('Assert Login usecase is correct at all', () => {
     try {
       await usecase.execute('22.00000-0@maua.br', 'senhaerradaaqui')
     } catch (error) {
-      expect(error).toEqual(new EntityError('password'))
-      expect(error.message).toEqual('Field password is not valid')
+      expect(error).toEqual(new Error('Password does not match'))
+      expect(error.message).toEqual('Password does not match')
     }
   })
     
