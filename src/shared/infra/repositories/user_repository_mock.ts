@@ -18,43 +18,43 @@ export class UserRepositoryMock implements IUserRepository {
       password: '$2a$06$eZD/Cu7rW77o.FM1EsEne.pHe9IQOeVICkbbtrXZkJjJh8rih1nJ.'
     }),
   ]
-
+  
   getLength(): number {
     return this.users.length
   }
-
+  
   async getUser(ra: string): Promise<User> {
     const user = this.users.find(user => user.ra === ra)
-
+    
     if (!user) {
       throw new NoItemsFound('ra')
     }
-
+    
     return user
   }
-
+  
   async getAllUsers(): Promise<User[]> {
     return this.users
   }
-
+  
   async createUser(user: User): Promise<User> {
     const { ra, password } = user.props
     const userExists = this.users.find(user => user.ra === ra)
-
+    
     if (userExists) {
       throw new DuplicatedItem('ra')
     }
-
+    
     if (password) user.setPassword = await hash(password, 6)
-
+    
     this.users.push(user)
-
+    
     return user
   }
-
+  
   async updateUser(ra: string, newName?: string, newEmail?: string, newPassword?: string): Promise<User> {
     const user = this.users.find(user => user.ra === ra)
-
+    
     if (!user) {
       throw new NoItemsFound('ra')
     }
@@ -67,22 +67,22 @@ export class UserRepositoryMock implements IUserRepository {
     if (newPassword) {
       user.props.password = newPassword
     }
-
+    
     return user
   }
-
+  
   async deleteUser(ra: string): Promise<User> {
     const user = this.users.find(user => user.ra === ra)
-
+    
     if (!user) {
       throw new NoItemsFound('ra')
     }
-
+    
     this.users = this.users.filter(user => user.ra !== ra)
     
     return user
   }
-
+  
   async login(email: string): Promise<User> {
     const ra = email.split('@')[0]
     const user = this.users.find(user => user.ra === ra)
