@@ -29,9 +29,9 @@ export class LoginController {
 
       const user = await this.usecase.execute(request.data.email, request.data.password)
 
-      if (request.data.password === envs.FIRST_ACCESS_PASSWORD) {
-        sendFirstAccessMail()
-      }
+      // if (request.data.password === envs.FIRST_ACCESS_PASSWORD) {
+      //   sendFirstAccessMail()
+      // }
 
       const jwtSecret = envs.JWT_SECRET
 
