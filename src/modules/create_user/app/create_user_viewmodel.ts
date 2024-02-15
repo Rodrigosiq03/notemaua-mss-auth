@@ -1,25 +1,25 @@
 import { UserProps } from '../../../shared/domain/entities/user'
-import { STATE } from '../../../shared/domain/enums/state_enum'
+import { ROLE } from '../../../shared/domain/enums/role_enum'
 
 export class CreateUserViewmodel {
-  private id: number
+  private ra: string
   private name: string
   private email: string
-  private state: STATE
+  private role: ROLE
 
   constructor(props: UserProps) {
-    this.id = props.id
+    this.ra = props.ra
     this.name = props.name
     this.email = props.email
-    this.state = props.state as STATE
+    this.role = props.role as ROLE
   }
 
   toJSON() {
     return {
-      'id': this.id,
+      'ra': this.ra,
       'name': this.name,
       'email': this.email,
-      'state': this.state,
+      'role': this.role,
       'message': 'The user was created successfully'
     }
   }

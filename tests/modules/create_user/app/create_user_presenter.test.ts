@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { handler } from '../../../../src/modules/create_user/app/create_user_presenter'
 
-describe.skip('Assert Create User presenter is correct at all', () => {
+describe('Assert Create User presenter is correct at all', () => {
   it('Should activate presenter correctly', async () => {
     const event = {
       'version': '2.0',
@@ -49,7 +49,7 @@ describe.skip('Assert Create User presenter is correct at all', () => {
         'time': '12/Mar/2020:19:03:58 +0000',
         'timeEpoch': 1583348638390
       },
-      'body': {'id': '10', 'name': 'usuario10', 'email': 'usuario10@gmail.com'},
+      'body': { 'ra': '22.00680-0' },
       'pathParameters': null,
       'isBase64Encoded': null,
       'stageVariables': null

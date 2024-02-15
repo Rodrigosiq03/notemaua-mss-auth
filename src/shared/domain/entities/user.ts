@@ -125,9 +125,14 @@ export class User {
   static validateRa(ra: string): boolean {
     if (ra == null) {
       return false
-    } else if (typeof(ra) != 'string') {
+    } 
+    if (typeof(ra) != 'string') {
       return false
-    } else if (ra.length !== 10) {
+    } 
+    if (ra.length !== 10) {
+      return false
+    } 
+    if (ra === '') {
       return false
     }
     return true
