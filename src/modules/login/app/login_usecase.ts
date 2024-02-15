@@ -12,7 +12,11 @@ export class LoginUsecase {
     }
     const user = await this.repo.login(email)
 
-    const doesPasswordMatches = await compare(password, user.password)
+    if (user === null) {
+      throw new Error('User not found')
+    }
+
+    const doesPasswordMatches = await compare(password, user.password!)
 
     if (!doesPasswordMatches) {
       throw new EntityError('password')

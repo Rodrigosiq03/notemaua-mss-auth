@@ -90,7 +90,7 @@ async function loadMockToLocalDynamo() {
   const users = await mock.getAllUsers()
 
   for(const user of users) {
-    console.log(`Loading user ${user.id} | ${user.name} to dynamoDB...`)
+    // console.log(`Loading user ${user.id} | ${user.name} to dynamoDB...`)
     await dynamoRepo.createUser(user)
     count += 1
   }
@@ -120,7 +120,7 @@ async function loadMockToRealDynamo() {
   const users = await mock.getAllUsers()
 
   for(const user of users) {
-    console.log(`Loading user ${user.id} | ${user.name} to dynamoDB...`)
+    // console.log(`Loading user ${user.id} | ${user.name} to dynamoDB...`)
     await dynamoRepo.createUser(user)
     count += 1
   }
