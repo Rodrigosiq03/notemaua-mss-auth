@@ -70,6 +70,12 @@ describe('Assert Get All Users presenter is correct at all', () => {
           'email': '22.11111-1@maua.br',
           'role': 'STUDENT',
         },
+        {
+          'ra': '22.22222-2',
+          'name': 'user3',
+          'email': '22.22222-2@maua.br',
+          'role': 'STUDENT',
+        }
       ],
     }
 

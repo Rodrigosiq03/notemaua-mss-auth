@@ -9,6 +9,6 @@ describe('Assert Get All Users usecase is correct at all', () => {
 
     const users = await usecase.execute()
 
-    expect(users.length).toBe(2)
+    expect(users.length).toBe(3)
   })
 })

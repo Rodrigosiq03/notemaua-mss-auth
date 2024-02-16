@@ -7,6 +7,7 @@ import { DynamoDatasource } from '../external/dynamo/datasources/dynamo_datasour
 import { EntityError } from '../../helpers/errors/domain_errors'
 import { Environments } from '../../../shared/environments'
 import { hash } from 'bcryptjs'
+import { generateRandomPassword } from '../../services/generate_random_password'
 
 export class UserRepositoryDynamo implements IUserRepository {
 
@@ -103,4 +104,41 @@ export class UserRepositoryDynamo implements IUserRepository {
 
     return Promise.resolve(user)
   }
+
+  async firstAccess(ra: string): Promise<User> {
+    const user = await this.getUser(ra)
+    
+    if (!user) throw new NoItemsFound('ra')
+
+    if (user.password === undefined || user.password === '' || user.password === null) {
+      const newPassword = generateRandomPassword(8)
+      user.setPassword = newPassword
+      const hashedPassword = await hash(newPassword, 6)
+
+      await this.updateUser(ra, undefined, undefined, hashedPassword)
+    }
+
+    return Promise.resolve(user)
+  }
+
+  async forgotPassword(ra: string): Promise<User> {
+    const user = await this.getUser(ra)
+
+    if (!user) throw new NoItemsFound('ra')
+
+    return Promise.resolve(user)
+  }
+
+  async confirmForgotPassword(ra: string, token: string, newPassword: string): Promise<User> {
+    const user = await this.getUser(ra)
+
+    if (!user) throw new NoItemsFound('ra')
+
+    user.setPassword = await hash(newPassword, 6)
+
+    await this.updateUser(ra, undefined, undefined, newPassword)
+
+    return Promise.resolve(user)
+  }
+
 }
