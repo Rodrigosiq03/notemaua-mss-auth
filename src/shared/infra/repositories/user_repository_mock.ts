@@ -2,6 +2,7 @@ import { hash } from 'bcryptjs'
 import { User } from '../../domain/entities/user'
 import { IUserRepository } from '../../domain/repositories/user_repository_interface'
 import { DuplicatedItem, NoItemsFound } from '../../helpers/errors/usecase_errors'
+import { generateRandomPassword } from '../../services/generate_random_password'
 
 export class UserRepositoryMock implements IUserRepository {
   private users: User[] = [
@@ -17,6 +18,11 @@ export class UserRepositoryMock implements IUserRepository {
       email: '22.11111-1@maua.br',
       password: '$2a$06$eZD/Cu7rW77o.FM1EsEne.pHe9IQOeVICkbbtrXZkJjJh8rih1nJ.'
     }),
+    new User({
+      ra: '22.22222-2',
+      name: 'user3',
+      email: '22.22222-2@maua.br',
+    })
   ]
   
   getLength(): number {
@@ -88,6 +94,38 @@ export class UserRepositoryMock implements IUserRepository {
     const user = this.users.find(user => user.ra === ra)
     if (!user) {
       throw new NoItemsFound('ra')
+    }
+    return user
+  }
+
+  async forgotPassword(ra: string): Promise<User> {
+    const user = this.users.find(user => user.ra === ra)
+    if (!user) {
+      throw new NoItemsFound('ra')
+    }
+    return user
+  }
+
+  async confirmForgotPassword(ra: string, token: string, newPassword: string): Promise<User> {
+    const user = this.users.find(user => user.ra === ra)
+    if (!user) {
+      throw new NoItemsFound('ra')
+    }
+
+    const updatedUser = this.updateUser(ra, undefined, undefined, newPassword)
+
+    return updatedUser
+  }
+
+  async firstAccess(ra: string): Promise<User> {
+    const user = this.users.find(user => user.ra === ra)
+    if (!user) {
+      throw new NoItemsFound('ra')
+    }
+    if (user.password === undefined || user.password === '' || user.password === null) {
+      const newPassword = generateRandomPassword(8)
+      user.setPassword = newPassword
+      this.updateUser(ra, undefined, undefined, newPassword)
     }
     return user
   }

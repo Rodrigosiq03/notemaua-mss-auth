@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import { handler } from '../../../../src/modules/get_all_users/app/get_all_users_presenter'
+import { expect, it, describe } from 'vitest'
+import { handler } from '../../../../src/modules/first_access/app/first_access_presenter'
 
-describe('Assert Get All Users presenter is correct at all', () => {
-  it('Should activate presenter correctly', async () => {
+describe('Assert First access presenter is correct at all', () => {
+  it('Assert First access presenter is correct when creating', async () => {
     const event = {
       'version': '2.0',
       'routeKey': '$default',
@@ -17,7 +17,7 @@ describe('Assert Get All Users presenter is correct at all', () => {
         'header2': 'value1,value2'
       },
       'queryStringParameters': {
-        'parameter1': 'value1',
+        'ra': '22.00000-0'
       },
       'requestContext': {
         'accountId': '123456789012',
@@ -30,7 +30,7 @@ describe('Assert Get All Users presenter is correct at all', () => {
             'callerId': 'AIDA...',
             'cognitoIdentity': null,
             'principalOrgId': null,
-            'userArn': 'arn:aws:iam::111122223333:user_id/example-user_id',
+            'userArn': 'arn:aws:iam::111122223333:user/example-user',
             'userId': 'AIDA...'
           }
         },
@@ -55,33 +55,9 @@ describe('Assert Get All Users presenter is correct at all', () => {
       'stageVariables': null
     }
 
-    const expectedBody = {
-      'message': 'All users have been retrieved successfully',
-      'users': [
-        {
-          'ra': '22.00000-0',
-          'name': 'user1',
-          'email': '22.00000-0@maua.br',
-          'role': 'STUDENT',
-        },
-        {
-          'ra': '22.11111-1',
-          'name': 'user2',
-          'email': '22.11111-1@maua.br',
-          'role': 'STUDENT',
-        },
-        {
-          'ra': '22.22222-2',
-          'name': 'user3',
-          'email': '22.22222-2@maua.br',
-          'role': 'STUDENT',
-        }
-      ],
-    }
+    const response = await handler(event, null)
 
-    const response = await handler(event, undefined)
-
-    expect(response['statusCode']).toEqual(200)
-    expect(JSON.parse(response['body'])).toEqual(expectedBody)
+    expect(response?.statusCode).toEqual(200)
+    expect(JSON.parse(response?.body)['message']).toEqual('A new password has been sent to your email. Please check it.')
   })
 })

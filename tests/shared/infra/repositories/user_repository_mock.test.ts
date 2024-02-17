@@ -33,7 +33,7 @@ describe('Assert User Repository Mock is correct at all', () => {
     const repo = new UserRepositoryMock()
     const users = await repo.getAllUsers()
 
-    expect(users.length).toEqual(2)
+    expect(users.length).toEqual(3)
   })
   it('Should update user correctly', async () => {
     const repo = new UserRepositoryMock()
