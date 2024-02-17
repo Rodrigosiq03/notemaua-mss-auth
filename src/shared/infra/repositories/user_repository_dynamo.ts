@@ -66,6 +66,10 @@ export class UserRepositoryDynamo implements IUserRepository {
   }
   async updateUser(ra: string, newName?: string, newEmail?: string, newPassword?: string): Promise<User> {
     const itemsToUpdate: Record<string, any> = {}
+    let hashedPassword: string = ''
+    if (newPassword) {
+      hashedPassword = await hash(newPassword, 6)
+    }
 
     switch (true) {
       case !!newName:
@@ -75,7 +79,7 @@ export class UserRepositoryDynamo implements IUserRepository {
         itemsToUpdate['email'] = newEmail
         break
       case !!newPassword:
-        itemsToUpdate['password'] = await hash(newPassword, 6)
+        itemsToUpdate['password'] = hashedPassword
         break
       default:
         throw new EntityError('Nothing to update')
