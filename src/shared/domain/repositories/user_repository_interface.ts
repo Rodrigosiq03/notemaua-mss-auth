@@ -8,6 +8,6 @@ export interface IUserRepository {
   deleteUser(ra: string): Promise<User>
   login(email: string): Promise<User>
   forgotPassword(email: string): Promise<User>
-  confirmForgotPassword(email: string, token: string, newPassword: string): Promise<User>
+  confirmForgotPassword(email: string, newPassword: string): Promise<User>
   firstAccess(ra: string): Promise<User>
 }
