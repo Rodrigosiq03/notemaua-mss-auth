@@ -1,4 +1,4 @@
-export function generateRandomPassword(length: number): string {
+export function generateRandomPassword(length: number) {
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let password = ''
   for (let i = 0; i < length; i++) {
