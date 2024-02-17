@@ -98,7 +98,8 @@ export class UserRepositoryMock implements IUserRepository {
     return user
   }
 
-  async forgotPassword(ra: string): Promise<User> {
+  async forgotPassword(email: string): Promise<User> {
+    const ra = email.split('@')[0]
     const user = this.users.find(user => user.ra === ra)
     if (!user) {
       throw new NoItemsFound('ra')

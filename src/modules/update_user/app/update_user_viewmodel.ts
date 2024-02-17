@@ -1,6 +1,5 @@
 import { UserProps } from '../../../shared/domain/entities/user'
 import { ROLE } from '../../../shared/domain/enums/role_enum'
-import { STATE } from '../../../shared/domain/enums/state_enum'
 
 export class UpdateUserViewmodel {
   private ra: string
