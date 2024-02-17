@@ -31,9 +31,9 @@ describe('Assert User Repository Mock is correct at all', () => {
   })
   it('Should get all users correctly', async () => {
     const repo = new UserRepositoryMock()
-    const users = await repo.getAllUsers()
+    const users = repo.getLength()
 
-    expect(users.length).toEqual(3)
+    expect(users).toEqual(3)
   })
   it('Should update user correctly', async () => {
     const repo = new UserRepositoryMock()
@@ -52,5 +52,12 @@ describe('Assert User Repository Mock is correct at all', () => {
     const newLength = repo.getLength()
 
     expect(newLength).toEqual(lastLength - 1)
+  })
+  it('Should login user correctly', async () => {
+    const repo = new UserRepositoryMock()
+    const user = await repo.login('22.00000-0@maua.br')
+
+    expect(user?.ra).toEqual('22.00000-0')
+    expect(user).toBeInstanceOf(User)
   })
 })

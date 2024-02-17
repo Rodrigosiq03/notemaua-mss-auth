@@ -65,13 +65,13 @@ export class UserRepositoryMock implements IUserRepository {
       throw new NoItemsFound('ra')
     }
     if (newName) {
-      user.props.name = newName
+      user.setName = newName
     }
     if (newEmail) {
-      user.props.email = newEmail
+      user.setEmail = newEmail
     }
     if (newPassword) {
-      user.props.password = newPassword
+      user.setPassword = newPassword
     }
     
     return user
@@ -107,7 +107,8 @@ export class UserRepositoryMock implements IUserRepository {
     return user
   }
 
-  async confirmForgotPassword(ra: string, token: string, newPassword: string): Promise<User> {
+  async confirmForgotPassword(email: string, newPassword: string): Promise<User> {
+    const ra = email.split('@')[0]
     const user = this.users.find(user => user.ra === ra)
     if (!user) {
       throw new NoItemsFound('ra')

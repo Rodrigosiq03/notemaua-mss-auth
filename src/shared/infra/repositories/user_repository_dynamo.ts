@@ -75,7 +75,7 @@ export class UserRepositoryDynamo implements IUserRepository {
         itemsToUpdate['email'] = newEmail
         break
       case !!newPassword:
-        itemsToUpdate['password'] = newPassword
+        itemsToUpdate['password'] = await hash(newPassword, 6)
         break
       default:
         throw new EntityError('Nothing to update')
@@ -113,9 +113,8 @@ export class UserRepositoryDynamo implements IUserRepository {
     if (user.password === undefined || user.password === '' || user.password === null) {
       const newPassword = generateRandomPassword(8)
       user.setPassword = newPassword
-      const hashedPassword = await hash(newPassword, 6)
 
-      await this.updateUser(ra, undefined, undefined, hashedPassword)
+      await this.updateUser(ra, undefined, undefined, newPassword)
     }
 
     return Promise.resolve(user)
@@ -129,7 +128,7 @@ export class UserRepositoryDynamo implements IUserRepository {
     return Promise.resolve(user)
   }
 
-  async confirmForgotPassword(ra: string, token: string, newPassword: string): Promise<User> {
+  async confirmForgotPassword(ra: string, newPassword: string): Promise<User> {
     const user = await this.getUser(ra)
 
     if (!user) throw new NoItemsFound('ra')
