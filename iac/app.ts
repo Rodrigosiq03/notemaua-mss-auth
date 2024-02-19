@@ -29,7 +29,7 @@ if (stackName === 'prod') {
 }
 
 const tags = {
-  'project': 'Template',
+  'project': 'NotemauaMssAuth',
   'stage': 'test',
   'stack': 'BACK',
   'owner': 'Digao'
