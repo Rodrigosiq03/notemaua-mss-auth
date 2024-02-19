@@ -23,7 +23,9 @@ export class FirstAccessController  {
 
       const user = await this.usecase.execute(request.data.ra)
 
-      if (user.password && envs.STAGE === STAGE.DEV) sendFirstAccessMail(user.ra, user.password)
+      console.log('user.password - [FIRST_ACCESS_CONTROLLER] - ', user.password)
+
+      if (user.password && envs.STAGE === STAGE.DEV || user.password && envs.STAGE === STAGE.PROD) await sendFirstAccessMail(user.ra, user.password)
 
       const viewmodel = new FirstAccessViewmodel()
 
