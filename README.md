@@ -98,6 +98,15 @@ npm i
 cd iac && npm i
 ```
 
+### Now you're done with the dependencies, let's run the project locally 🚀🚀
+## But before you run the project, you'll need to load the mock to the dynamodb, so you'll need to run this command below
+
+### Remenber to set the endpoint_url to http://localhost:8000 on the file called load_user_mock_to_dynamo.ts ‼️‼️
+  
+```zsh
+ts-node src/shared/infra/repositories/load_user_mock_to_dynamo.ts
+```
+
 ### Remember to start the docker on your machine, because the project will use the docker to run the project locally. And you'll need to run this command below to start the docker
 - Go to iac folder, there you'll find a folder called local, go there and run the command below
 
@@ -114,6 +123,12 @@ docker-compose up -d dynamodb-local
 STAGE=DEV
 ```
 
+### Remember to set ENPOINT_URL to http://dynamodb-local:8000 on the .env file, so the SAM CLI can communicate to the EXACTLY dynamodb that you started on the docker
+
+```.env
+ENDPOINT_URL=http://dynamodb-local:8000
+```
+
 - After the config of the .env file, you'll need to run the command below to build the project, so <span style="color: red">on the root dir</span> run this command
 
 ```zsh
@@ -123,7 +138,7 @@ yarn build
 - To avoid errors when running it locally you need to set the ecr on aws or the docker hub, so you'll need to run this command below
 
 ```zsh
- aws ecr-public get-login-password --region sa-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+ aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 
 ```
 
