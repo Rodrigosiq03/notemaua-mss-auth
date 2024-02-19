@@ -1,5 +1,10 @@
 import { config } from 'dotenv'
-config()
+import path from 'path'
+
+// const stage = process.env.STAGE
+
+// if (stage === 'DEV') config({ path: path.resolve(__dirname, './.env.local') })
+config({ path: path.resolve(__dirname, './.env.local') })
 
 const envs = {
   STAGE: process.env.STAGE,
@@ -16,9 +21,9 @@ const envs = {
   S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
   CLOUD_FRONT_DISTRIBUTION_DOMAIN: process.env.CLOUD_FRONT_DISTRIBUTION_DOMAIN,
   JWT_SECRET: process.env.JWT_SECRET,
-  FIRST_ACCESS_PASSWORD: process.env.FIRST_ACCESS_PASSWORD,
   MAIL_USER: process.env.MAIL_USER,
   MAIL_PASSWORD: process.env.MAIL_PASSWORD
 }
+console.log(envs)
 
 export default envs
