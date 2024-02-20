@@ -13,33 +13,45 @@ const transporter = createTransport({
 })
 
 export async function sendFirstAccessMail(ra: string, newPassword: string) {
-  const mailOptions = {
-    from: `"Contato Notemaua" <${envs.MAIL_USER}>`,
-    to: `${ra}@maua.br`,
-    subject: 'Primeiro acesso ao Notemaua!',
-    html: firstAccessMailHtml(newPassword)
-  }
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error)
+  try {
+    const htmlFirstAccessMail = firstAccessMailHtml(newPassword)
+    const email = `${ra}@maua.br`
+    const mailOptions = {
+      from: `"Contato Notemaua" <${envs.MAIL_USER}>`,
+      to: email,
+      subject: 'Primeiro acesso ao Notemaua!',
+      html: htmlFirstAccessMail
     }
+  
+    console.log('send_mail - [SEND_FIRST_ACCESS_MAIL] - CHEGOU AQUI!')
+    console.log('mailOptions - [SEND_FIRST_ACCESS_MAIL] - ', mailOptions)
+  
+    const info = await transporter.sendMail(mailOptions)
     console.log('Email sent: ' + info.response)
-  })
+
+  } catch(error) {
+    console.log('send_mail - [SEND_FIRST_ACCESS_MAIL] - ERROR - ', error)
+  }
 }
 
 export async function sendForgotPasswordMail(email: string, code: string) {
-  const mailOptions = {
-    from: `"Contato Notemaua" <${envs.MAIL_USER}>`,
-    to: email,
-    subject: 'Primeiro acesso ao Notemaua!',
-    html: forgotPasswordMailHtml(code)
-  }
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error)
+  try {
+    const htmlForgotPasswordMail = forgotPasswordMailHtml(code)
+    const mailOptions = {
+      from: `"Contato Notemaua" <${envs.MAIL_USER}>`,
+      to: email,
+      subject: 'Recuperação de senha!',
+      html: htmlForgotPasswordMail
     }
+  
+    console.log('send_mail - [SEND_FORGOT_PASSWORD_MAIL] - CHEGOU AQUI!')
+    console.log('mailOptions - [SEND_FORGOT_PASSWORD_MAIL] - ', mailOptions)
+  
+    const info = await transporter.sendMail(mailOptions)
+
     console.log('Email sent: ' + info.response)
-  })
+
+  } catch(error) {
+    console.log('send_mail - [SEND_FORGOT_PASSWORD_MAIL] - ERROR - ', error)
+  }
 }
