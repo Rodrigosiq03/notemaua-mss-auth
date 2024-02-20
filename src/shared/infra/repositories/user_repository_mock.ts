@@ -125,7 +125,7 @@ export class UserRepositoryMock implements IUserRepository {
       throw new NoItemsFound('ra')
     }
     if (user.password === undefined || user.password === '' || user.password === null) {
-      const newPassword = generateRandomPassword(8)
+      const newPassword = generateRandomPassword()
       user.setPassword = newPassword
       this.updateUser(ra, undefined, undefined, newPassword)
     }
