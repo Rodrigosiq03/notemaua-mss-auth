@@ -121,4 +121,78 @@ describe('Assert User Dynamo DTO is correct at all', () => {
 
     expect(userDynamo).toEqual(expectedDynamo)
   })
+  it('Should get user with no password dto correctly', async () => {
+    const repo = new UserRepositoryMock()
+    const user = await repo.getUser('22.22222-2')
+    const expectedDto = new UserDynamoDTO({
+      ra: user?.ra,
+      name: user?.name,
+      email: user?.email,
+      role: user?.role as ROLE,
+      password: user?.password
+    })
+
+    const fromEntity = UserDynamoDTO.fromEntity(user)
+
+    expect(fromEntity).toEqual(expectedDto)
+  })
+  it('Should get a to dynamo dto with no password correctly', async () => {
+    const repo = new UserRepositoryMock()
+    const user = await repo.getUser('22.22222-2')
+    const userDto = new UserDynamoDTO({
+      ra: user?.ra,
+      name: user?.name,
+      email: user?.email,
+      role: user?.role as ROLE,
+      password: user?.password
+    })
+    const userDynamo = userDto.toDynamo()
+    const expectedDynamo = {
+      'entity': 'user',
+      'ra': user?.ra,
+      'name': user?.name,
+      'email': user?.email,
+      'role': user?.role,
+      'password': user?.password,
+    }
+
+    expect(userDynamo).toEqual(expectedDynamo)
+  })
+  it('Should get a correctly user from dynamo dto with no password', async () => {
+    const dynamo_dict = {'Item': {'ra': { 'S': '22.22222-2'},
+      'name': { 'S': 'user1'},
+      'SK': { 'S': '#1'},
+      'role': { 'S': 'STUDENT'},
+      'PK': { 'S': 'user#1' },
+      'entity': { 'S': 'user' },
+      'email': { 'S': '22.22222-2@maua.br'},
+    }
+    }
+
+    const user = UserDynamoDTO.fromDynamo(dynamo_dict['Item'])
+    const expectedUser = new UserDynamoDTO({
+      ra: '22.22222-2',
+      name: 'user1',
+      email: '22.22222-2@maua.br',
+      role: ROLE.STUDENT,
+      password: undefined
+    })
+
+    expect(user).toEqual(expectedUser)
+  })
+  it('Should get a correctly to entity with no password', async () => {
+    const repo = new UserRepositoryMock()
+    const userRepo = await repo.getUser('22.22222-2')
+    const userDto = new UserDynamoDTO({
+      ra: userRepo?.ra,
+      name: userRepo?.name,
+      email: userRepo?.email,
+      role: userRepo?.role as ROLE,
+      password: userRepo?.password
+    }) 
+
+    const user = userDto.toEntity()
+
+    expect(user).toEqual(userRepo)
+  })
 })

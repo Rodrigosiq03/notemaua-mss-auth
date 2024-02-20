@@ -28,9 +28,11 @@ export class UserRepositoryDynamo implements IUserRepository {
   async getUser(ra: string): Promise<User> {
     console.log('Environments.getEnvs().dynamoTableName - [GET_USER_REPO_DYNAMO] - ', Environments.getEnvs().dynamoTableName)
     const resp = await this.dynamo.getItem(UserRepositoryDynamo.partitionKeyFormat(ra), UserRepositoryDynamo.sortKeyFormat(ra))
+    
+    console.log('resp - [GET_USER_REPO_DYNAMO] - ', resp)
 
     if (!resp['Item']) {
-      throw new NoItemsFound('id')
+      throw new NoItemsFound('ra')
     }
 
     const userDto = UserDynamoDTO.fromDynamo(resp['Item'])
@@ -50,13 +52,8 @@ export class UserRepositoryDynamo implements IUserRepository {
     return Promise.resolve(users)
   }
   async createUser(user: User): Promise<User> {
-    const { ra, password } = user.props
-    const userExists = await this.getUser(ra)
-
-    if (userExists) {
-      throw new DuplicatedItem('ra')
-    }
-
+    const { password } = user.props
+    
     if (password) user.setPassword = await hash(password, 6)
 
     const userDto = UserDynamoDTO.fromEntity(user)
@@ -110,21 +107,29 @@ export class UserRepositoryDynamo implements IUserRepository {
   }
 
   async firstAccess(ra: string): Promise<User> {
+    console.log('ra - [FIRST_ACCESS_REPO_DYNAMO] - ', ra)
     const user = await this.getUser(ra)
+    console.log('user - [FIRST_ACCESS_REPO_DYNAMO] - ', user)
     
     if (!user) throw new NoItemsFound('ra')
 
     if (user.password === undefined || user.password === '' || user.password === null) {
-      const newPassword = generateRandomPassword(8)
+      const newPassword = generateRandomPassword()
+      console.log('newPassword - [FIRST_ACCESS_REPO_DYNAMO] - ', newPassword)
       user.setPassword = newPassword
+
+      console.log('newUser - [FIRST_ACCESS_REPO_DYNAMO] - ', user)
 
       await this.updateUser(ra, undefined, undefined, newPassword)
     }
 
+    console.log('PASSOU DO UPDATE - [FIRST_ACCESS_REPO_DYNAMO] - ', user)
+
     return Promise.resolve(user)
   }
 
-  async forgotPassword(ra: string): Promise<User> {
+  async forgotPassword(email: string): Promise<User> {
+    const ra = email.split('@')[0]
     const user = await this.getUser(ra)
 
     if (!user) throw new NoItemsFound('ra')
@@ -132,7 +137,8 @@ export class UserRepositoryDynamo implements IUserRepository {
     return Promise.resolve(user)
   }
 
-  async confirmForgotPassword(ra: string, newPassword: string): Promise<User> {
+  async confirmForgotPassword(email: string, newPassword: string): Promise<User> {
+    const ra = email.split('@')[0]
     const user = await this.getUser(ra)
 
     if (!user) throw new NoItemsFound('ra')

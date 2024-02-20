@@ -47,11 +47,11 @@ export class UserDynamoDTO {
   }
 
   static fromDynamo(userData: any) {
-    const ra = userData['ra'] && userData['ra']['S'] ? userData['ra']['S'] : null
-    const name = userData['name'] && userData['name']['S'] ? userData['name']['S'] : null
-    const email = userData['email'] && userData['email']['S'] ? userData['email']['S'] : null
-    const role = userData['role'] && userData['role']['S'] ? userData['role']['S'] : null
-    const password = userData['password'] && userData['password']['S'] ? userData['password']['S'] : null
+    const ra = userData['ra'] && userData['ra']['S'] ? userData['ra']['S'] : undefined
+    const name = userData['name'] && userData['name']['S'] ? userData['name']['S'] : undefined
+    const email = userData['email'] && userData['email']['S'] ? userData['email']['S'] : undefined
+    const role = userData['role'] && userData['role']['S'] ? userData['role']['S'] : undefined
+    const password = userData['password'] && userData['password']['S'] ? userData['password']['S'] : undefined
 
     return new UserDynamoDTO({
       ra,

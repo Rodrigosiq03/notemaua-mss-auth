@@ -11,7 +11,7 @@ export class TemplateDynamoTable extends Construct {
 
     if (env.DYNAMO_TABLE_NAME === undefined) throw new Error('DYNAMO_TABLE_NAME is undefined')
 
-    this.table = new Table(this, 'UserMssTemplateTable', {
+    this.table = new Table(this, 'NotemauaMssAuthTable', {
       tableName: env.DYNAMO_TABLE_NAME,
       partitionKey: {
         name: 'PK',

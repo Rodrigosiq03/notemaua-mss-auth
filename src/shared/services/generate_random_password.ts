@@ -1,8 +1,29 @@
-export function generateRandomPassword(length: number) {
-  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()-_=+[{]}\\|;:\'",<.>/?'
-  let password = ''
-  for (let i = 0; i < length; i++) {
-    password += charset.charAt(Math.floor(Math.random() * charset.length))
+export function generateRandomPassword(): string {
+  const uppercaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  const lowercaseLetters = 'abcdefghijklmnopqrstuvwxyz'
+  const numbers = '0123456789'
+  const specialCharacters = '!@#$%^&*'
+
+  const randomCharacter = (options: string) => {
+    const index = Math.floor(Math.random() * options.length)
+    return options.charAt(index)
   }
-  return password
+
+  const password: string[] = [
+    randomCharacter(uppercaseLetters),
+    randomCharacter(lowercaseLetters),
+    randomCharacter(numbers),
+    randomCharacter(specialCharacters),
+  ]
+
+  const remainingCharacters = uppercaseLetters + lowercaseLetters + numbers + specialCharacters
+
+  for (let i = password.length; i < 8; i++) {
+    password.push(randomCharacter(remainingCharacters))
+  }
+
+  // Shuffle the password to ensure randomness
+  password.sort(() => Math.random() - 0.5)
+
+  return password.join('')
 }

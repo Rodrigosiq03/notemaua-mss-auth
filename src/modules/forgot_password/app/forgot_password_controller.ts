@@ -24,9 +24,9 @@ export class ForgotPasswordController  {
 
       const user = await this.usecase.execute(request.data.email)
 
-      if (envs.STAGE === STAGE.DEV) {
+      if (envs.STAGE === STAGE.DEV || envs.STAGE === STAGE.PROD) {
         const code = generateCode()
-        sendForgotPasswordMail(user.ra, code)
+        await sendForgotPasswordMail(user.email, code)
       }
 
       const viewmodel = new ForgotPasswordViewmodel()
