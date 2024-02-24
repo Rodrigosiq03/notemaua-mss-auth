@@ -5,3 +5,9 @@ export class PasswordDoesNotMatchError extends BaseError {
     super('Password does not match')
   }
 }
+
+export class FirstAccessAlreadyDoneError extends BaseError {
+  constructor() {
+    super('First access already done')
+  }
+}

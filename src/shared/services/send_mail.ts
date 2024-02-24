@@ -1,6 +1,7 @@
 import { createTransport } from 'nodemailer'
 import envs from '../../..'
 import { firstAccessMailHtml, forgotPasswordMailHtml } from './mail_html'
+import { FailureSendingEmailError } from '../helpers/errors/email_errors'
 
 const transporter = createTransport({
   host: 'smtp-mail.outlook.com',
@@ -31,6 +32,7 @@ export async function sendFirstAccessMail(ra: string, newPassword: string) {
 
   } catch(error) {
     console.log('send_mail - [SEND_FIRST_ACCESS_MAIL] - ERROR - ', error)
+    throw new FailureSendingEmailError()
   }
 }
 
@@ -53,5 +55,6 @@ export async function sendForgotPasswordMail(email: string, code: string) {
 
   } catch(error) {
     console.log('send_mail - [SEND_FORGOT_PASSWORD_MAIL] - ERROR - ', error)
+    throw new FailureSendingEmailError()
   }
 }

@@ -2,9 +2,11 @@ import envs from '../../../..'
 import { STAGE } from '../../../shared/domain/enums/stage_enum'
 import { MissingParameters, WrongTypeParameters } from '../../../shared/helpers/errors/controller_errors'
 import { EntityError } from '../../../shared/helpers/errors/domain_errors'
+import { FailureSendingEmailError } from '../../../shared/helpers/errors/email_errors'
+import { FirstAccessAlreadyDoneError } from '../../../shared/helpers/errors/login_errors'
 import { ForbiddenAction, NoItemsFound } from '../../../shared/helpers/errors/usecase_errors'
 import { IRequest } from '../../../shared/helpers/external_interfaces/external_interface'
-import { BadRequest, Forbidden, InternalServerError, NotFound, OK } from '../../../shared/helpers/external_interfaces/http_codes'
+import { BadRequest, Conflict, Forbidden, InternalServerError, NotFound, OK } from '../../../shared/helpers/external_interfaces/http_codes'
 import { sendFirstAccessMail } from '../../../shared/services/send_mail'
 import { FirstAccessUsecase } from './first_access_usecase'
 import { FirstAccessViewmodel } from './first_access_viewmodel'
@@ -45,6 +47,12 @@ export class FirstAccessController  {
       }
       if (error instanceof EntityError) {
         return new BadRequest(error.message)
+      }
+      if (error instanceof FirstAccessAlreadyDoneError) {
+        return new Conflict(error.message)
+      }
+      if (error instanceof FailureSendingEmailError) {
+        return new InternalServerError(error.message)
       }
       if (error instanceof ForbiddenAction) {
         return new Forbidden(error.message as any)

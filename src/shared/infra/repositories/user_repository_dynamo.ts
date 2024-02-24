@@ -8,6 +8,7 @@ import { EntityError } from '../../helpers/errors/domain_errors'
 import { Environments } from '../../../shared/environments'
 import { hash } from 'bcryptjs'
 import { generateRandomPassword } from '../../services/generate_random_password'
+import { FirstAccessAlreadyDoneError } from '../../helpers/errors/login_errors'
 
 export class UserRepositoryDynamo implements IUserRepository {
 
@@ -121,6 +122,8 @@ export class UserRepositoryDynamo implements IUserRepository {
       console.log('newUser - [FIRST_ACCESS_REPO_DYNAMO] - ', user)
 
       await this.updateUser(ra, undefined, undefined, newPassword)
+    } else {
+      throw new FirstAccessAlreadyDoneError()
     }
 
     console.log('PASSOU DO UPDATE - [FIRST_ACCESS_REPO_DYNAMO] - ', user)
