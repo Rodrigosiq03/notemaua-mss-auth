@@ -4,7 +4,7 @@ import { firstAccessMailHtml, forgotPasswordMailHtml } from './mail_html'
 import { FailureSendingEmailError } from '../helpers/errors/email_errors'
 
 const transporter = createTransport({
-  host: 'smtp-mail.outlook.com',
+  host: 'smtp.mailgun.org',
   port: 587,
   secure: false,
   auth: {
