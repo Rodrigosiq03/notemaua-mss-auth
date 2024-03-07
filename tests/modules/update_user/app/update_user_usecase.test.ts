@@ -8,14 +8,14 @@ describe('Assert Update User usecase is correct at all', () => {
     const repo = new UserRepositoryMock()
     const usecase = new UpdateUserUsecase(repo)
 
-    const user = await usecase.execute('22.00000-0', 'usuario1', 'usuario1@gmail.com')
+    const user = await usecase.execute('22.00000-0', 'Teste123$')
 
     expect(user.props).toEqual({
       ra: '22.00000-0',
-      name: 'usuario1',
-      email: 'usuario1@gmail.com',
+      name: 'user1',
+      email: '22.00000-0@maua.br',
       role: ROLE.STUDENT,
-      password: '$2a$06$eZD/Cu7rW77o.FM1EsEne.pHe9IQOeVICkbbtrXZkJjJh8rih1nJ.'
+      password: 'Teste123$'
     })
   })
 })

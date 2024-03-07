@@ -14,22 +14,14 @@ export class UpdateUserViewmodel {
     this.role = props.role as ROLE
   }
 
-  toJSON(passwordUpdated?: boolean) {
-    if (passwordUpdated) {
-      return {
-        'ra': this.ra,
-        'name': this.name,
-        'email': this.email,
-        'role': this.role,
-        'message': 'Your password was updated successfully'
-      }
-    }
+  toJSON() {
     return {
       'ra': this.ra,
       'name': this.name,
       'email': this.email,
       'role': this.role,
-      'message': 'The user was updated successfully'
+      'message': 'Your password was updated successfully'
     }
+    
   }
 }

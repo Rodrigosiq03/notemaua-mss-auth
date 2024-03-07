@@ -58,17 +58,11 @@ export class UserRepositoryMock implements IUserRepository {
     return user
   }
   
-  async updateUser(ra: string, newName?: string, newEmail?: string, newPassword?: string): Promise<User> {
+  async updateUser(ra: string, newPassword: string): Promise<User> {
     const user = this.users.find(user => user.ra === ra)
     
     if (!user) {
       throw new NoItemsFound('ra')
-    }
-    if (newName) {
-      user.setName = newName
-    }
-    if (newEmail) {
-      user.setEmail = newEmail
     }
     if (newPassword) {
       user.setPassword = newPassword
@@ -114,7 +108,7 @@ export class UserRepositoryMock implements IUserRepository {
       throw new NoItemsFound('ra')
     }
 
-    const updatedUser = this.updateUser(ra, undefined, undefined, newPassword)
+    const updatedUser = this.updateUser(ra, newPassword)
 
     return updatedUser
   }
@@ -127,7 +121,7 @@ export class UserRepositoryMock implements IUserRepository {
     if (user.password === undefined || user.password === '' || user.password === null) {
       const newPassword = generateRandomPassword()
       user.setPassword = newPassword
-      this.updateUser(ra, undefined, undefined, newPassword)
+      this.updateUser(ra, newPassword)
     }
     return user
   }

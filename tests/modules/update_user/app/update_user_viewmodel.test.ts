@@ -3,24 +3,6 @@ import { UpdateUserViewmodel } from '../../../../src/modules/update_user/app/upd
 import { User } from '../../../../src/shared/domain/entities/user'
 
 describe('Assert Update User viewmodel is correct at all', () => {
-  it('Should activate viewmodel correctly', async () => {
-    const user = new User({
-      ra: '22.00000-0',
-      name: 'user10',
-      email: 'user10@gmail.com',
-      password: 'Teste123$'
-    })
-
-    const userViewmodel = new UpdateUserViewmodel(user.props).toJSON()
-
-    expect(userViewmodel).toEqual({
-      'ra': '22.00000-0',
-      'name': 'user10',
-      'email': 'user10@gmail.com',
-      'role': 'STUDENT',
-      'message': 'The user was updated successfully'
-    })
-  })
   it('Should activate viewmodel for password updated correctly', async () => {
     const user = new User({
       ra: '22.00000-0',
@@ -29,7 +11,7 @@ describe('Assert Update User viewmodel is correct at all', () => {
       password: 'Teste123$'
     })
 
-    const userViewmodel = new UpdateUserViewmodel(user.props).toJSON(true)
+    const userViewmodel = new UpdateUserViewmodel(user.props).toJSON()
 
     expect(userViewmodel).toEqual({
       'ra': '22.00000-0',
