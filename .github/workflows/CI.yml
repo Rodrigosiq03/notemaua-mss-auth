@@ -23,3 +23,5 @@ jobs:
         run: yarn build
       - name: Test (Vitest)
         run: yarn test --no-watch
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}

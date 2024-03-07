@@ -38,11 +38,10 @@ describe('Assert User Repository Mock is correct at all', () => {
   it('Should update user correctly', async () => {
     const repo = new UserRepositoryMock()
     
-    const userUpdated = await repo.updateUser('22.00000-0', 'usuario1', 'usuario1@gmail.com')
+    const userUpdated = await repo.updateUser('22.00000-0', 'Teste123$')
 
     expect(userUpdated?.ra).toEqual('22.00000-0')
-    expect(userUpdated?.name).toEqual('usuario1')
-    expect(userUpdated?.email).toEqual('usuario1@gmail.com')
+    expect(userUpdated?.password).toEqual('Teste123$')
     expect(userUpdated?.role).toEqual(ROLE.STUDENT)
   })
   it('Should delete user correctly', async () => {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MissingParameters, WrongTypeParameters } from '../../../shared/helpers/errors/controller_errors'
 import { EntityError } from '../../../shared/helpers/errors/domain_errors'
-import { NoItemsFound } from '../../../shared/helpers/errors/usecase_errors'
+import { ForbiddenAction, NoItemsFound } from '../../../shared/helpers/errors/usecase_errors'
 import { IRequest } from '../../../shared/helpers/external_interfaces/external_interface'
 import { BadRequest, InternalServerError, NotFound, OK } from '../../../shared/helpers/external_interfaces/http_codes'
 import { UpdateUserUsecase } from './update_user_usecase'
@@ -10,37 +10,35 @@ import { UpdateUserViewmodel } from './update_user_viewmodel'
 export class UpdateUserController {
   constructor(private usecase: UpdateUserUsecase) {}
 
-  async handle(request: IRequest) {
+  async handle(request: IRequest, user: any) {
     try {
+      if (user === undefined) {
+        throw new MissingParameters('token')
+      }
+
+      const role = user.role
+      
+      if (role === undefined || role !== 'STUDENT') {
+        throw new ForbiddenAction('type of user')
+      }
+
       if (!request.data.ra) {
         throw new MissingParameters('ra')
       }
       if (typeof request.data.ra !== 'string') {
         throw new WrongTypeParameters('ra', 'string', typeof request.data.ra) 
       }
-
-      if (request.data.name && typeof request.data.name !== 'string') {
-        throw new WrongTypeParameters('name', 'string', typeof request.data.name)
+      if (!request.data.password) {
+        throw new MissingParameters('password')
       }
-
-      if (request.data.email && typeof request.data.email !== 'string') {
-        throw new WrongTypeParameters('email', 'string', typeof request.data.email)
-      }
-
-      if (request.data.password && typeof request.data.password !== 'string') {
+      if (typeof request.data.password !== 'string') {
         throw new WrongTypeParameters('password', 'string', typeof request.data.password)
       }
 
-      const { ra, name, email, password } = request.data
+      const { ra, password } = request.data
 
-      const user = await this.usecase.execute(ra as any, name as any, email as any, password as any)
-      const viewmodel = new UpdateUserViewmodel(user)
-
-      if (!name && !email && password) {
-        const response = new OK(viewmodel.toJSON(true))
-
-        return response
-      }
+      const updatedUser = await this.usecase.execute(ra, password)
+      const viewmodel = new UpdateUserViewmodel(updatedUser)
 
       const response = new OK(viewmodel.toJSON())
 

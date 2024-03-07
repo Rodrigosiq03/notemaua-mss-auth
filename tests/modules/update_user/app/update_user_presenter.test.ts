@@ -1,7 +1,20 @@
 import { describe, it, expect } from 'vitest'
 import { handler } from '../../../../src/modules/update_user/app/update_user_presenter'
+import envs from '../../../..'
+import jwt from 'jsonwebtoken'
 
 describe('Assert Update User presenter is correct at all', () => {
+  const user = {
+    role: 'STUDENT',
+    name: 'Luca Pinheiro Gomes',
+    ra: '23.00555-7',
+  }
+  const secret = envs.JWT_SECRET
+
+  if (secret === undefined) throw Error('JWT_SECRET is not defined')
+
+  const token = jwt.sign({ user: JSON.stringify(user)}, secret)
+
   it('Should activate presenter correctly', async () => {
     const event = {
       'version': '2.0',
@@ -14,7 +27,8 @@ describe('Assert Update User presenter is correct at all', () => {
       ],
       'headers': {
         'header1': 'value1',
-        'header2': 'value1,value2'
+        'header2': 'value1,value2',
+        'Authorization': `Bearer ${token}`,
       },
       'queryStringParameters': {
         'parameter1': 'value1',
@@ -49,7 +63,7 @@ describe('Assert Update User presenter is correct at all', () => {
         'time': '12/Mar/2020:19:03:58 +0000',
         'timeEpoch': 1583348638390
       },
-      'body': {'ra': '22.00000-0', 'name': 'usuario1', 'email': 'usuario1@gmail.com'},
+      'body': {'ra': '22.00000-0', 'password': 'Teste123$'},
       'pathParameters': null,
       'isBase64Encoded': null,
       'stageVariables': null
@@ -59,10 +73,10 @@ describe('Assert Update User presenter is correct at all', () => {
 
     expect(response?.statusCode).toEqual(200)
     expect(JSON.parse(response?.body)['ra']).toEqual('22.00000-0')
-    expect(JSON.parse(response?.body)['name']).toEqual('usuario1')
-    expect(JSON.parse(response?.body)['email']).toEqual('usuario1@gmail.com')
+    expect(JSON.parse(response?.body)['name']).toEqual('user1')
+    expect(JSON.parse(response?.body)['email']).toEqual('22.00000-0@maua.br')
     expect(JSON.parse(response?.body)['role']).toEqual('STUDENT')
-    expect(JSON.parse(response?.body)['message']).toEqual('The user was updated successfully')
+    expect(JSON.parse(response?.body)['message']).toEqual('Your password was updated successfully')
 
   })
 })

@@ -62,26 +62,14 @@ export class UserRepositoryDynamo implements IUserRepository {
 
     return Promise.resolve(userDto.toEntity())
   }
-  async updateUser(ra: string, newName?: string, newEmail?: string, newPassword?: string): Promise<User> {
+  async updateUser(ra: string, newPassword: string): Promise<User> {
     const itemsToUpdate: Record<string, any> = {}
     let hashedPassword: string = ''
     if (newPassword) {
       hashedPassword = await hash(newPassword, 6)
     }
 
-    switch (true) {
-      case !!newName:
-        itemsToUpdate['name'] = newName
-        break
-      case !!newEmail:
-        itemsToUpdate['email'] = newEmail
-        break
-      case !!newPassword:
-        itemsToUpdate['password'] = hashedPassword
-        break
-      default:
-        throw new EntityError('Nothing to update')
-    }
+    itemsToUpdate['password'] = hashedPassword
 
     const resp = await this.dynamo.updateItem(UserRepositoryDynamo.partitionKeyFormat(ra), UserRepositoryDynamo.sortKeyFormat(ra), itemsToUpdate)
 
@@ -121,7 +109,7 @@ export class UserRepositoryDynamo implements IUserRepository {
 
       console.log('newUser - [FIRST_ACCESS_REPO_DYNAMO] - ', user)
 
-      await this.updateUser(ra, undefined, undefined, newPassword)
+      await this.updateUser(ra, newPassword)
     } else {
       throw new FirstAccessAlreadyDoneError()
     }
@@ -148,7 +136,7 @@ export class UserRepositoryDynamo implements IUserRepository {
 
     user.setPassword = await hash(newPassword, 6)
 
-    await this.updateUser(ra, undefined, undefined, newPassword)
+    await this.updateUser(ra, newPassword)
 
     return Promise.resolve(user)
   }
