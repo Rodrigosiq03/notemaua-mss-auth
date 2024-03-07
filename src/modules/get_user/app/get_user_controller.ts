@@ -10,16 +10,11 @@ import { GetUserViewmodel } from './get_user_viewmodel'
 export class GetUserController {
   constructor(private usecase: GetUserUsecase) {}
 
-  async handle(request: IRequest) {
+  async handle(request: IRequest, userDecoded: any) {
     try {
-      if (request.data.ra === undefined) {
-        throw new MissingParameters('ra')
-      }
-      if (typeof request.data.ra !== 'string') {
-        throw new WrongTypeParameters('ra', 'string', typeof request.data.ra)
-      }
+      const ra = userDecoded.ra
 
-      const user = await this.usecase.execute(request.data.ra)
+      const user = await this.usecase.execute(ra)
 
       const viewmodel = new GetUserViewmodel(user)
 

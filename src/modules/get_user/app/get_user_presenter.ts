@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Environments } from '../../../shared/environments'
 import { LambdaHttpRequest, LambdaHttpResponse } from '../../../shared/helpers/external_interfaces/http_lambda_requests'
+import { getUserFromToken } from '../../../shared/middlewares/jwt_middleware'
 import { GetUserController } from './get_user_controller'
 import { GetUserUsecase } from './get_user_usecase'
 
@@ -11,7 +12,8 @@ const controller = new GetUserController(usecase)
 
 export async function getUserPresenter(event: Record<string, any>) {
   const httpRequest = new LambdaHttpRequest(event)
-  const response = await controller.handle(httpRequest)
+  const decoded = getUserFromToken(httpRequest.data.Authorization)
+  const response = await controller.handle(httpRequest, decoded)
   const httpResponse = new LambdaHttpResponse(response?.body, response?.statusCode, response?.headers)
 
   return httpResponse.toJSON()
