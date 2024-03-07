@@ -1,7 +1,18 @@
 import { expect, it, describe } from 'vitest'
 import { handler } from '../../../../src/modules/get_user/app/get_user_presenter'
+import envs from '../../../..'
+import jwt from 'jsonwebtoken'
 
 describe('Assert Get User presenter is correct at all', () => {
+  const user = {
+    ra: '22.00000-0',
+  }
+  const secret = envs.JWT_SECRET
+
+  if (secret === undefined) throw Error('JWT_SECRET is not defined')
+
+  const token = jwt.sign({ user: JSON.stringify(user)}, secret)
+  
   it('Assert Get User presenter is correct when creating', async () => {
     const event = {
       'version': '2.0',
@@ -14,11 +25,10 @@ describe('Assert Get User presenter is correct at all', () => {
       ],
       'headers': {
         'header1': 'value1',
-        'header2': 'value1,value2'
+        'header2': 'value1,value2',
+        'Authorization': `Bearer ${token}`
       },
-      'queryStringParameters': {
-        'ra': '22.00000-0'
-      },
+      'queryStringParameters': {},
       'requestContext': {
         'accountId': '123456789012',
         'apiId': '<urlid>',
