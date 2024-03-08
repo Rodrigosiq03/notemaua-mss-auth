@@ -10,18 +10,8 @@ import { UpdateUserViewmodel } from './update_user_viewmodel'
 export class UpdateUserController {
   constructor(private usecase: UpdateUserUsecase) {}
 
-  async handle(request: IRequest, user: any) {
+  async handle(request: IRequest) {
     try {
-      if (user === undefined) {
-        throw new MissingParameters('token')
-      }
-
-      const role = user.role
-      
-      if (role === undefined || role !== 'STUDENT') {
-        throw new ForbiddenAction('type of user')
-      }
-
       if (!request.data.ra) {
         throw new MissingParameters('ra')
       }

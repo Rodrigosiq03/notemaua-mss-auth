@@ -11,9 +11,7 @@ describe('Assert Update User presenter is correct at all', () => {
   }
   const secret = envs.JWT_SECRET
 
-  if (secret === undefined) throw Error('JWT_SECRET is not defined')
 
-  const token = jwt.sign({ user: JSON.stringify(user)}, secret)
 
   it('Should activate presenter correctly', async () => {
     const event = {
@@ -28,7 +26,6 @@ describe('Assert Update User presenter is correct at all', () => {
       'headers': {
         'header1': 'value1',
         'header2': 'value1,value2',
-        'Authorization': `Bearer ${token}`,
       },
       'queryStringParameters': {
         'parameter1': 'value1',
