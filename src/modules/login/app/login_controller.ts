@@ -36,6 +36,8 @@ export class LoginController {
 
       const jwtSecret = envs.JWT_SECRET
 
+      user.setPassword = ''
+
       const token = jsonwebtoken.sign({ user: JSON.stringify(user)}, jwtSecret, 
         {
           expiresIn: '24h'
