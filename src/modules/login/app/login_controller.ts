@@ -36,7 +36,7 @@ export class LoginController {
 
       const jwtSecret = envs.JWT_SECRET
 
-      user.setPassword = ''
+      user.setPassword = 'passwordtohideOnResponse1#'
 
       const token = jsonwebtoken.sign({ user: JSON.stringify(user)}, jwtSecret, 
         {
