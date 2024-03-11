@@ -36,12 +36,15 @@ export class LoginController {
 
       const jwtSecret = envs.JWT_SECRET
 
-      user.setPassword = 'passwordtohideOnResponse1#'
-
-      const token = jsonwebtoken.sign({ user: JSON.stringify(user)}, jwtSecret, 
-        {
-          expiresIn: '24h'
-        })
+      const token = jsonwebtoken.sign({ user: JSON.stringify({
+        ra: user.ra,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      })}, jwtSecret, 
+      {
+        expiresIn: '24h'
+      })
 
       const viewmodel = new LoginViewmodel(token)
 
