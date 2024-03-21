@@ -38,7 +38,7 @@ export class LoginController {
 
       const token = jsonwebtoken.sign({ user: JSON.stringify(user)}, jwtSecret, 
         {
-          expiresIn: '24h'
+          expiresIn: '7d'
         })
 
       const viewmodel = new LoginViewmodel(token)
