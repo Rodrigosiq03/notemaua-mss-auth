@@ -1,0 +1,63 @@
+name: AWS Destroy
+on: 
+  workflow_dispatch:
+jobs:
+  DestroyAWS:
+    environment:
+      name: ${{ github.ref }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup AWS Credentials
+        run: |
+          echo "Configuring AWS Credentials"
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+          aws configure set default.region ${{ secrets.AWS_REGION }}
+          aws configure set default.output json
+      - name: Setting stage, stack name
+        run: |
+          echo "STAGE=${{ secrets.STAGE }}" >> $GITHUB_ENV
+          echo "STACK_NAME=${{ secrets.STACK_NAME }}" >> $GITHUB_ENV
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Installing Dependencies
+        run: |
+          yarn
+          cd iac
+          npm install -g aws-cdk
+          npm i
+      - name: Setup envs
+        run: |
+          echo STAGE=${{ secrets.STAGE }} >> $GITHUB_ENV
+          echo AWS_REGION=${{ secrets.AWS_REGION }}>> $GITHUB_ENV
+          echo STACK_NAME=${{ env.STACK_NAME }} >> $GITHUB_ENV
+          echo MAIL_USER=${{ secrets.MAIL_USER }} >> $GITHUB_ENV
+          echo MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} >> $GITHUB_ENV
+          echo DYNAMO_TABLE_NAME=${{ secrets.DYNAMO_TABLE_NAME }} >> $GITHUB_ENV
+          echo DYNAMO_PARTITION_KEY=${{ secrets.DYNAMO_PARTITION_KEY }} >> $GITHUB_ENV
+          echo DYNAMO_SORT_KEY=${{ secrets.DYNAMO_SORT_KEY }} >> $GITHUB_ENV
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> $GITHUB_ENV
+      - name: CDK Destroy
+        run: |
+          echo "CDK Destroy"
+          cd iac
+          cdk destroy --force
+        env:
+          STAGE: ${{ secrets.STAGE }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          STACK_NAME: ${{ secrets.STACK_NAME }}
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
+          DYNAMO_PARTITION_KEY: ${{ secrets.DYNAMO_PARTITION_KEY }}
+          DYNAMO_SORT_KEY: ${{ secrets.DYNAMO_SORT_KEY }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
