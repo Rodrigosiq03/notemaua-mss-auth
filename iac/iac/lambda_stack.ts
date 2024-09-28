@@ -5,6 +5,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { Resource, LambdaIntegration } from 'aws-cdk-lib/aws-apigateway'
 import { Duration } from 'aws-cdk-lib'
 import * as path from 'path'
+import envs from '../..'
 
 export class LambdaStack extends Construct {
   functionsThatNeedDynamoPermissions: lambda.Function[] = []
@@ -26,8 +27,8 @@ export class LambdaStack extends Construct {
     
     // create_user -> Create_user
 
-    const lambdaFunction = new NodejsFunction(this, modifiedModuleName, {
-      functionName: `${modifiedModuleName}`,
+    const lambdaFunction = new NodejsFunction(this, `${envs.STACK_NAME}-${modifiedModuleName}`, {
+      functionName: `${envs.STACK_NAME}-${modifiedModuleName}`,
       entry: path.join(__dirname, `../../src/modules/${moduleName}/app/${moduleName}_presenter.ts`),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_18_X,
