@@ -27,7 +27,7 @@ export class TemplateStack extends Stack {
       }
     })
 
-    const dynamoTable = new TemplateDynamoTable(this, 'NotemauaMssAuthDynamoTable')
+    const dynamoTable = new TemplateDynamoTable(this, 'NotemauaMssAuthTable')
 
     const ENVIRONMENT_VARIABLES = {
       'STAGE': env.STAGE,
