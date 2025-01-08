@@ -1,192 +1,97 @@
 import { EntityError } from '../../helpers/errors/domain_errors'
-import { ROLE, toEnum } from '../enums/role_enum'
+import { ROLE } from '../enums/role_enum'
 
-export type UserProps = {
-  ra: string;
-  name: string;
-  email: string;
-  role?: ROLE;
-  password?: string;
-}
-
-export type JsonProps = {
-  ra: string;
-  name: string;
-  email: string;
-  role?: string;
-  password?: string;
+class UserProps {
+  id!: string;
+  name!: string | null;
+  email!: string;
+  role!: ROLE;
+  createdAt!: Date;
+  updatedAt!: Date;
 }
 
 export class User {
-  constructor (public props: UserProps) {
-    if (!User.validateRa(props.ra as string)) {
-      throw new EntityError('props.ra')
-    }
-    this.props.ra = props.ra
+  id: string;
+  name: string | null;
+  email: string;
+  role: ROLE;
+  createdAt: Date;
+  updatedAt: Date;
 
-    if (!User.validateName(props.name)) {
-      throw new EntityError('props.name')
-    }
-    this.props.name = props.name
-
-    if (!User.validateEmail(props.email)) {
-      throw new EntityError('props.email')
-    }
-    this.props.email = props.email
-    if (props.role === null || props.role === undefined) {
-      this.props.role = ROLE.STUDENT
-    }
-    if (!User.validateRole(props.role as ROLE)) {
-      throw new EntityError('props.role')
-    }
-    this.props.role = props.role
-    if (!User.validatePassword(props.password)) {
-      throw new EntityError('props.password')
-    }
-    this.props.password = props.password
-
+  constructor(props: UserProps) {
+    this.id = this.validate_set_id(props.id);
+    this.name = props.name;
+    this.email = this.validate_set_email(props.email);
+    this.role = this.validate_set_role(props.role);
+    this.createdAt = this.validate_set_createdAt(props.createdAt);
+    this.updatedAt = this.validate_set_updatedAt(props.updatedAt);
   }
 
-  get ra() {
-    return this.props.ra
-  }
-
-  set setRa(ra: string) {
-    if (!User.validateRa(ra)) {
-      throw new EntityError('props.ra')
-    }
-    this.props.ra = ra
-  }
-
-  get name() {
-    return this.props.name
-  }
-
-  set setName(name: string) {
-    if (!User.validateName(name)) {
-      throw new EntityError('props.name')
-    }
-    this.props.name = name
-  }
-
-  get email() {
-    return this.props.email
-  }
-
-  set setEmail(email: string) {
-    if (!User.validateEmail(email)) {
-      throw new EntityError('props.email')
-    }
-    this.props.email = email
-  }
-
-  get role() {
-    return this.props.role
-  }
-
-  set setRole(role: ROLE) {
-    if (!User.validateRole(role)) {
-      throw new EntityError('props.role')
-    }
-    this.props.role = role
-  }
-
-  get password() {
-    return this.props.password
-  }
-
-  set setPassword(password: string) {
-    if (!User.validatePassword(password)) {
-      throw new EntityError('props.password')
-    }
-    this.props.password = password
-  }
-    
-  static fromJSON(json: JsonProps) {
-    return new User({
-      ra: json.ra,
-      name: json.name,
-      email: json.email,
-      role: toEnum(json.role as string),
-      password: json.password
-    })
-  }
-
-  toJSON() {
+  public to_json() {
     return {
-      ra: this.ra,
+      id: this.id,
       name: this.name,
       email: this.email,
       role: this.role,
-      password: this.password
-    }
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 
-  static validateRa(ra: string): boolean {
-    if (ra == null) {
-      return false
-    } 
-    if (typeof(ra) != 'string') {
-      return false
-    } 
-    if (ra.length !== 10) {
-      return false
-    } 
-    if (ra === '') {
-      return false
+  private validate_set_id(id: string) {
+    if (id == null || id == "") {
+      throw new EntityError("Parameter id is required");
     }
-    return true
+    if (typeof id !== "string") {
+      throw new EntityError("Parameter id is not a string");
+    }
+    if (id.length != 36) {
+      throw new EntityError("Parameter id is not a valid UUID");
+    }
+    return id;
   }
 
-  static validateName(name: string): boolean {
-    if (name == null) {
-      return false
-    } else if (typeof(name) != 'string') {
-      return false
-    } else if (name.length < 3) {
-      return false
+  private validate_set_email(email: string) {
+    if (email == null || email == "") {
+      throw new EntityError("Parameter email is required");
     }
-    return true
+    if (typeof email !== "string") {
+      throw new EntityError("Parameter email is not a string");
+    }
+    let padrao: RegExp = /^[a-zA-Z0-9._%+-]+@maua\.br$/;
+    if (!padrao.test(email)) {
+      throw new EntityError("Invalid Email, must be a maua.br domain");
+    }
+    return email;
   }
 
-  static validateEmail(email: string): boolean {
-    const regexp = '(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$)'
-
-    if (email == null) {
-      return false
-    }
-    if (typeof(email) != 'string') {
-      return false
-    }
-    if (!email.match(regexp)) {
-      return false
-    }
-    return true
-  }
-
-  static validateRole(role: ROLE): boolean {
+  private validate_set_role(role: ROLE) {
     if (role == null) {
-      return false
-    } 
-    if (Object.values(ROLE).includes(role) == false) {
-      return false
+      throw new EntityError("Parameter role is required");
     }
-    return true
+    if (!(role in ROLE)) {
+      throw new EntityError("Parameter role is not a UserTypeEnum");
+    }
+    return role;
   }
 
-  static validatePassword(password?: string): boolean {
-    const regexp = '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])'
-
-    if (password == null || password == undefined) {
-      return true
-    } else if (typeof(password) != 'string') {
-      return false
-    } else if (password.length < 6) {
-      return false
-    } else if (!password.match(regexp)) {
-      return false
+  private validate_set_createdAt(createdAt: Date) {
+    if (createdAt == null) {
+      throw new EntityError("Parameter createdAt is required");
     }
-    return true
+    if (typeof createdAt !== "object") {
+      throw new EntityError("Parameter createdAt is not a Date");
+    }
+    return createdAt;
   }
 
+  private validate_set_updatedAt(updatedAt: Date) {
+    if (updatedAt == null) {
+      throw new EntityError("Parameter updatedAt is required");
+    }
+    if (typeof updatedAt !== "object") {
+      throw new EntityError("Parameter updatedAt is not a Date");
+    }
+    return updatedAt;
+  }
 }
