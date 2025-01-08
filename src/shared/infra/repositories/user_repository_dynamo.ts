@@ -1,23 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from '../../domain/entities/user'
 import { IUserRepository } from '../../domain/repositories/user_repository_interface'
-import { DuplicatedItem, NoItemsFound } from '../../helpers/errors/usecase_errors'
+import { NoItemsFound } from '../../helpers/errors/usecase_errors'
 import { UserDynamoDTO } from '../dto/user_dynamo_dto'
 import { DynamoDatasource } from '../external/dynamo/datasources/dynamo_datasource'
-import { EntityError } from '../../helpers/errors/domain_errors'
 import { Environments } from '../../../shared/environments'
 import { hash } from 'bcryptjs'
-import { generateRandomPassword } from '../../services/generate_random_password'
-import { FirstAccessAlreadyDoneError } from '../../helpers/errors/login_errors'
 
 export class UserRepositoryDynamo implements IUserRepository {
 
-  static partitionKeyFormat(ra: string): string {
-    return `user#${ra}`
+  static partitionKeyFormat(email: string): string {
+    return `user#${email}`
   }
 
-  static sortKeyFormat(ra: string): string {
-    return `#${ra}`
+  static sortKeyFormat(email: string): string {
+    return `#${email}`
   }
 
   constructor(private dynamo: DynamoDatasource = new DynamoDatasource(
@@ -26,14 +23,57 @@ export class UserRepositoryDynamo implements IUserRepository {
     Environments.getEnvs().region, undefined, undefined, Environments.getEnvs().endpointUrl, Environments.getEnvs().dynamoSortKey
   )) {}
 
-  async getUser(ra: string): Promise<User> {
+  async updateUser(user: User): Promise<User> {
+    const userExists = await this.getUser(user.email)
+
+    if (!userExists) {
+      throw new NoItemsFound('email')
+    }
+
+    const updatePaemailms: {
+      UpdateExpression: string,
+      ExpressionAttributeNames: { '#name': string, '#role': string, '#updatedAt': string, '#password'?: string },
+      ExpressionAttributeValues: { ':name': string, ':role': string, ':updatedAt': string, ':password'?: string }
+    } = {
+      UpdateExpression: 'set #name = :name, #role = :role, #updatedAt = :updatedAt',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+        '#role': 'role',
+        '#updatedAt': 'updatedAt'
+      },
+      ExpressionAttributeValues: {
+        ':name': user.name || '',
+        ':role': user.role,
+        ':updatedAt': new Date().toISOString()
+      }
+    }
+
+    const resp = await this.dynamo.updateItem(
+      UserRepositoryDynamo.partitionKeyFormat(user.email),
+      UserRepositoryDynamo.sortKeyFormat(user.email),
+      updatePaemailms
+    )
+
+    const updatedUserDto = UserDynamoDTO.fromDynamo(resp['Attributes'])
+    return Promise.resolve(updatedUserDto.toEntity())
+  }
+
+  async getUserByEmail(email: string): Promise<User> {
+    const user = await this.getUser(email)
+
+    if (!user) throw new NoItemsFound('email')
+
+    return Promise.resolve(user)
+  }
+
+  async getUser(email: string): Promise<User> {
     console.log('Environments.getEnvs().dynamoTableName - [GET_USER_REPO_DYNAMO] - ', Environments.getEnvs().dynamoTableName)
-    const resp = await this.dynamo.getItem(UserRepositoryDynamo.partitionKeyFormat(ra), UserRepositoryDynamo.sortKeyFormat(ra))
+    const resp = await this.dynamo.getItem(UserRepositoryDynamo.partitionKeyFormat(email), UserRepositoryDynamo.sortKeyFormat(email))
     
     console.log('resp - [GET_USER_REPO_DYNAMO] - ', resp)
 
     if (!resp['Item']) {
-      throw new NoItemsFound('ra')
+      throw new NoItemsFound('email')
     }
 
     const userDto = UserDynamoDTO.fromDynamo(resp['Item'])
@@ -52,93 +92,32 @@ export class UserRepositoryDynamo implements IUserRepository {
 
     return Promise.resolve(users)
   }
+  
   async createUser(user: User): Promise<User> {
-    const { password } = user.props
-    
-    if (password) user.setPassword = await hash(password, 6)
-
     const userDto = UserDynamoDTO.fromEntity(user)
-    await this.dynamo.putItem(userDto.toDynamo(), UserRepositoryDynamo.partitionKeyFormat(user.ra), UserRepositoryDynamo.sortKeyFormat(user.ra))
+    await this.dynamo.putItem(
+      userDto.toDynamo(),
+      UserRepositoryDynamo.partitionKeyFormat(user.email),
+      UserRepositoryDynamo.sortKeyFormat(user.email)
+    )
 
-    return Promise.resolve(userDto.toEntity())
+    return Promise.resolve(user)
   }
-  async updateUser(ra: string, newPassword: string): Promise<User> {
-    const itemsToUpdate: Record<string, any> = {}
-    let hashedPassword: string = ''
-    if (newPassword) {
-      hashedPassword = await hash(newPassword, 6)
-    }
 
-    itemsToUpdate['password'] = hashedPassword
+  async deleteUser(email: string): Promise<User> {
+    const user = await this.getUser(email)
 
-    const resp = await this.dynamo.updateItem(UserRepositoryDynamo.partitionKeyFormat(ra), UserRepositoryDynamo.sortKeyFormat(ra), itemsToUpdate)
+    if (!user) throw new NoItemsFound('email')
 
-    const userDto = UserDynamoDTO.fromDynamo(resp['Attributes']).toEntity()
-
-    return Promise.resolve(userDto)
-  }
-  async deleteUser(ra: string): Promise<User> {
-    const user = await this.getUser(ra)
-
-    if (!user) throw new NoItemsFound('ra')
-
-    await this.dynamo.deleteItem(UserRepositoryDynamo.partitionKeyFormat(ra), UserRepositoryDynamo.sortKeyFormat(ra))
+    await this.dynamo.deleteItem(UserRepositoryDynamo.partitionKeyFormat(email), UserRepositoryDynamo.sortKeyFormat(email))
 
     return Promise.resolve(user)
   }
   async login(email: string): Promise<User> {
-    const ra = email.split('@')[0]
-    const user = await this.getUser(ra)
+    const user = await this.getUser(email)
 
     if (!user) throw new NoItemsFound('email')
 
     return Promise.resolve(user)
   }
-
-  async firstAccess(ra: string): Promise<User> {
-    console.log('ra - [FIRST_ACCESS_REPO_DYNAMO] - ', ra)
-    const user = await this.getUser(ra)
-    console.log('user - [FIRST_ACCESS_REPO_DYNAMO] - ', user)
-    
-    if (!user) throw new NoItemsFound('ra')
-
-    if (user.password === undefined || user.password === '' || user.password === null) {
-      const newPassword = generateRandomPassword()
-      console.log('newPassword - [FIRST_ACCESS_REPO_DYNAMO] - ', newPassword)
-      user.setPassword = newPassword
-
-      console.log('newUser - [FIRST_ACCESS_REPO_DYNAMO] - ', user)
-
-      await this.updateUser(ra, newPassword)
-    } else {
-      throw new FirstAccessAlreadyDoneError()
-    }
-
-    console.log('PASSOU DO UPDATE - [FIRST_ACCESS_REPO_DYNAMO] - ', user)
-
-    return Promise.resolve(user)
-  }
-
-  async forgotPassword(email: string): Promise<User> {
-    const ra = email.split('@')[0]
-    const user = await this.getUser(ra)
-
-    if (!user) throw new NoItemsFound('ra')
-
-    return Promise.resolve(user)
-  }
-
-  async confirmForgotPassword(email: string, newPassword: string): Promise<User> {
-    const ra = email.split('@')[0]
-    const user = await this.getUser(ra)
-
-    if (!user) throw new NoItemsFound('ra')
-
-    user.setPassword = await hash(newPassword, 6)
-
-    await this.updateUser(ra, newPassword)
-
-    return Promise.resolve(user)
-  }
-
 }
