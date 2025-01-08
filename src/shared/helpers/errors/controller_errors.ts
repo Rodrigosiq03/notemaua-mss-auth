@@ -11,3 +11,23 @@ export class WrongTypeParameters extends BaseError {
     super(`Field ${fieldName} isn't in the right type.\n Received: ${fieldTypeReceived}.\n Expected: ${fieldTypeExpected}.`)
   }
 }
+
+export class UserNotAuthenticated extends BaseError {
+  constructor(message?: string) {
+      if (message) {
+          super(message);
+      } else {
+          super("User not authentificated");
+      }
+  }
+}
+
+export class UserNotAllowed extends BaseError {
+  constructor(message?: string) {
+      if (message) {
+          super(message);
+      } else {
+          super("User not allowed");
+      }
+  }
+}
