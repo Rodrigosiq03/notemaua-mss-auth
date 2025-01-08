@@ -3,6 +3,7 @@ import { User } from '../../../shared/domain/entities/user'
 import { TokenAuth } from '../../../shared/helpers/external_interfaces/token_auth'
 import { MissingParameters, UserNotAllowed, UserNotAuthenticated } from '../../../shared/helpers/errors/controller_errors'
 import { ROLE } from '../../../shared/domain/enums/role_enum';
+import { v4 as uuid } from 'uuid';
 
 export class OAuthUserUsecase {
     public token_auth: TokenAuth;
@@ -49,7 +50,7 @@ export class OAuthUserUsecase {
             });
         } else {
             user = new User({
-                id: randomUUID(),
+                id: uuid(),
                 name: token_response.displayName.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "), // title case
                 email: token_response.mail,
                 role: ROLE.STUDENT,
@@ -64,8 +65,4 @@ export class OAuthUserUsecase {
             created_user: !get_user
         }
     }
-}
-
-function randomUUID(): string {
-    throw new Error('Function not implemented.');
 }
