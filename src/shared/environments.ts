@@ -1,7 +1,6 @@
 import { STAGE } from './domain/enums/stage_enum'
 import { IUserRepository } from './domain/repositories/user_repository_interface'
 import { UserRepositoryDynamo } from './infra/repositories/user_repository_dynamo'
-import { UserRepositoryMock } from './infra/repositories/user_repository_mock'
 import env from '../../index'
 
 export class Environments {
@@ -25,7 +24,6 @@ export class Environments {
       this.configureLocal()
     }
 
-    
     this.stage = env.STAGE as STAGE
 
     console.log('process.env.STAGE - [CHEGOU NO LOAD_ENVS] - ', env.STAGE)
@@ -57,17 +55,10 @@ export class Environments {
 
   static getUserRepo(): IUserRepository {
     console.log('Environments.getEnvs().stage - [ENVIRONMENTS - { GET USER REPO }] - ', Environments.getEnvs().stage)
-
-    if (Environments.getEnvs().stage === STAGE.TEST) {
-      return new UserRepositoryMock()
-    } else if (Environments.getEnvs().stage === STAGE.DEV || Environments.getEnvs().stage === STAGE.PROD) {
-      return new UserRepositoryDynamo()
-    } else {
-      throw new Error('Invalid STAGE')
-    }
+    return new UserRepositoryDynamo()
   }
 
-  static getEnvs() {
+  static getEnvs(): Environments {
     const envs = new Environments()
     envs.loadEnvs()
     return envs
