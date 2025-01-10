@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as cdk from 'aws-cdk-lib'
 import { TemplateStack } from './iac/template_stack'
+import * as dotenv from 'dotenv'
 import { adjustLayerDirectory } from './adjust_layer_directory'
 import { envs as env } from '../index'
 
@@ -11,6 +12,8 @@ adjustLayerDirectory()
 console.log('Finished adjusting the layer directory')
 
 const app = new cdk.App()
+
+dotenv.config(); 
 
 const requiredEnvs: (keyof typeof env)[] = [
   'REGION',
