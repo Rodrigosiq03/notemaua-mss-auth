@@ -10,7 +10,7 @@ export class GetUserViewmodel {
 
   constructor(props: UserProps) {
     this.ra = props.ra
-    this.name = props.name
+    this.name = props.name ?? ''
     this.email = props.email
     this.role = props.role as ROLE
   }
