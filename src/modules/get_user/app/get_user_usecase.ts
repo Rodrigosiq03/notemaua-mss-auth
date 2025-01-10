@@ -6,9 +6,6 @@ export class GetUserUsecase {
   constructor(private repo: IUserRepository) {}
 
   async execute(ra: string) {
-    if (!User.validateRa(ra)) {
-      throw new EntityError('ra')
-    }
 
     const user = await this.repo.getUser(ra)
 
