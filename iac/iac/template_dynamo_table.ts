@@ -1,7 +1,7 @@
 import { Construct } from 'constructs'
 import { Table, AttributeType, BillingMode } from 'aws-cdk-lib/aws-dynamodb'
 import { RemovalPolicy } from 'aws-cdk-lib'
-import env from '../../index'
+import { envs as env } from '../../index'
 
 export class TemplateDynamoTable extends Construct {
   public table: Table
