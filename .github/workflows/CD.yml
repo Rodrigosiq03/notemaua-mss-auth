@@ -20,14 +20,14 @@ jobs:
       - name: Setup AWS Credentials
         run: |
           echo "Configuring AWS Credentials"
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
-          aws configure set default.region ${{ secrets.AWS_REGION }}
+          aws configure set aws_access_key_id ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
+          aws configure set default.region ${{ vars.AWS_REGION }}
           aws configure set default.output json
       - name: Setting stage, stack name
         run: |
-          echo "STAGE=${{ secrets.STAGE }}" >> $GITHUB_ENV
-          echo "STACK_NAME=${{ secrets.STACK_NAME }}" >> $GITHUB_ENV
+          echo "STAGE=${{ vars.STAGE }}" >> $GITHUB_ENV
+          echo "STACK_NAME=${{ vars.STACK_NAME }}" >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
@@ -41,17 +41,17 @@ jobs:
           npm i
       - name: Setup envs
         run: |
-          echo STAGE=${{ secrets.STAGE }} >> $GITHUB_ENV
-          echo AWS_REGION=${{ secrets.AWS_REGION }}>> $GITHUB_ENV
-          echo STACK_NAME=${{ secrets.STACK_NAME }}${{ github.ref_name }} >> $GITHUB_ENV
-          echo DYNAMO_TABLE_NAME=${{ secrets.DYNAMO_TABLE_NAME }} >> $GITHUB_ENV
+          echo STAGE=${{ vars.STAGE }} >> $GITHUB_ENV
+          echo AWS_REGION=${{ vars.AWS_REGION }}>> $GITHUB_ENV
+          echo STACK_NAME=${{ vars.STACK_NAME }}${{ github.ref_name }} >> $GITHUB_ENV
+          echo DYNAMO_TABLE_NAME=${{ vars.DYNAMO_TABLE_NAME }} >> $GITHUB_ENV
           
       - name: CDK Bootstrap
         run: |
           echo "CDK Bootstrap"
           cd iac
           aws cloudformation describe-stacks --stack-name CDKToolkit 2>&1 > /dev/null || \
-            cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/sa-east-1
+            cdk bootstrap aws://${{ vars.AWS_ACCOUNT_ID }}/sa-east-1
       - name: Deploy with CDK
         run: |
           source $GITHUB_ENV
@@ -60,9 +60,9 @@ jobs:
           cdk synth
           cdk deploy --require-approval never
         env:
-          STAGE: ${{ secrets.STAGE }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          STACK_NAME: ${{ secrets.STACK_NAME }}
-          DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
+          STAGE: ${{ vars.STAGE }}
+          AWS_ACCESS_KEY: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          STACK_NAME: ${{ vars.STACK_NAME }}
+          DYNAMO_TABLE_NAME: ${{ vars.DYNAMO_TABLE_NAME }}
