@@ -9,7 +9,7 @@ export class UserViewmodel {
 
   constructor(user: User) {
     this.ra = user.ra
-    this.name = user.name
+    this.name = user.name as string 
     this.email = user.email
     this.role = user.role as ROLE
   }
