@@ -7,18 +7,18 @@ import { envs as env, envs } from '../../index'
 // import { stage } from 'get_stage_env'
 
 if (!envs.GITHUB_REF) {
-  throw new Error('GITHUB_REF is not defined in the environment variables.');
+  throw new Error('GITHUB_REF is not defined in the environment variables.')
 }
 
-let stage: string;
+let stage: string
 if (envs.GITHUB_REF.includes('prod')) {
-  stage = 'PROD';
+  stage = 'PROD'
 } else if (envs.GITHUB_REF.includes('homolog')) {
-  stage = 'HOMOLOG';
+  stage = 'HOMOLOG'
 } else if (envs.GITHUB_REF.includes('dev')) {
-  stage = 'DEV';
+  stage = 'DEV'
 } else {
-  stage = 'TEST';
+  stage = 'TEST'
 }
 
 
@@ -26,7 +26,7 @@ export class TemplateStack extends Stack {
   constructor(scope: Construct, constructId: string, props?: StackProps) {
     super(scope, constructId, props)
 
-    const restApi = new RestApi(this, `${env.STACK_NAME}x-RestApi`, {
+    const restApi = new RestApi(this, `${env.STACK_NAME}-RestApi`, {
       restApiName: `${env.STACK_NAME}-${stage}-RestApi`,
       description: 'This is the REST API for the Notemaua MSS Auth Service.',
       defaultCorsPreflightOptions: {
@@ -51,7 +51,7 @@ export class TemplateStack extends Stack {
       'DYNAMO_TABLE_NAME': env.DYNAMO_TABLE_NAME,
       'DYNAMO_PARTITION_KEY': 'PK',
       'DYNAMO_SORT_KEY': 'SK',
-      'AWS_REGION': env.REGION,
+      'REGION': env.REGION,
     }
 
     const lambdaStack = new LambdaStack(this, apigatewayResource, ENVIRONMENT_VARIABLES)
