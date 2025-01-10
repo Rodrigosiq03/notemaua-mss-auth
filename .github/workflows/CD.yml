@@ -11,7 +11,8 @@ on:
       - prod
 jobs:
   DeployToAWS:
-    environment: ${{ github.ref }}
+    environment:
+      name: ${{ github.ref }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -38,21 +39,22 @@ jobs:
         run: |
           yarn
           cd iac
-          npm install -g aws-cdk ts-node
+          npm install -g aws-cdk
           npm i
       - name: Setup envs
         run: |
           echo STAGE=${{ vars.STAGE }} >> $GITHUB_ENV
           echo AWS_REGION=${{ vars.AWS_REGION }}>> $GITHUB_ENV
-          echo STACK_NAME=${{ vars.STACK_NAME }}${{ github.ref_name }} >> $GITHUB_ENV
-          echo DYNAMO_TABLE_NAME=${{ vars.DYNAMO_TABLE_NAME }} >> $GITHUB_ENV
-          
+          echo STACK_NAME=${{ env.STACK_NAME }} >> $GITHUB_ENV
+          echo GITHUB_REF_NAME=${{ github.ref_name }} >> $GITHUB_ENV
+          echo DYNAMO_TABLE_NAME=${{ vars.DYNA_DB_TABLE_NAME }} >> $GITHUB_ENV
+
       - name: CDK Bootstrap
         run: |
           echo "CDK Bootstrap"
           cd iac
           aws cloudformation describe-stacks --stack-name CDKToolkit 2>&1 > /dev/null || \
-            cdk bootstrap aws://${{ vars.AWS_ACCOUNT_ID }}/sa-east-1
+            cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/sa-east-1
       - name: Deploy with CDK
         run: |
           source $GITHUB_ENV
@@ -65,5 +67,5 @@ jobs:
           AWS_ACCESS_KEY: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-          STACK_NAME: ${{ vars.STACK_NAME }}
-          DYNAMO_TABLE_NAME: ${{ vars.DYNAMO_TABLE_NAME }}
+          STACK_NAME: ${{ vars.STACK_NAME }}${{ github.ref_name }}
+          DYNAMO_DB_TABLE_NAME: ${{ vars.DYNA_DB_TABLE_NAME }}
