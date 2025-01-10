@@ -2,7 +2,7 @@ import { IRequest } from '../../../shared/helpers/external_interfaces/external_i
 import { OK } from '../../../shared/helpers/external_interfaces/http_codes'
 
 export class HealthCheckController {
-  handle(request: IRequest) {
+  handle() {
     return new OK({ message: 'Health Check OK' })
   }
 }

@@ -29,11 +29,6 @@ requiredEnvs.forEach((envVar) => {
   }
 })
 
-
-if (!env.REGION || !env.AWS_ACCOUNT_ID || !env.STACK_NAME) {
-  throw new Error('Missing required environment variables. AQUIIIIII AQUIIIII AQUIIIII AQUUIIIIII AQUIIIIII')
-}
-
 const awsRegion = env.REGION
 const awsAccount = env.AWS_ACCOUNT_ID
 const stackName = env.STACK_NAME

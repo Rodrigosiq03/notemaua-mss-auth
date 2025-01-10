@@ -40,7 +40,7 @@ export class LambdaStack extends Construct {
   }
 
   constructor(scope: Construct, apiGatewayResource: Resource, environmentVariables: Record<string, any>) {
-    super(scope, 'NotemauaMssAuthLambdaStack')
+    super(scope, `${envs.STACK_NAME}-LambdaStack`)
 
     this.lambdaLayer = new lambda.LayerVersion(this, `${envs.STACK_NAME}-Layer`, {
       code: lambda.Code.fromAsset('./shared'),
