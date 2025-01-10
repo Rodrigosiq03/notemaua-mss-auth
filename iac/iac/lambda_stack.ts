@@ -14,13 +14,7 @@ export class LambdaStack extends Construct {
 
   getUserFunction: lambda.Function
   getAllUsersFunction: lambda.Function
-  createUserFunction: lambda.Function
-  deleteUserFunction: lambda.Function
-  updateUserFunction: lambda.Function
-  loginFunction: lambda.Function
-  forgotPasswordFunction: lambda.Function
-  confirmForgotPasswordFunction: lambda.Function
-  firstAccessFunction: lambda.Function
+  oAuthUserFunction: lambda.Function
 
 
   createLambdaApiGatewayIntegration(moduleName: string, method: string, mssStudentApiResource: Resource, environmentVariables: Record<string, any>) {
@@ -28,8 +22,8 @@ export class LambdaStack extends Construct {
     
     // create_user -> Create_user
 
-    const lambdaFunction = new NodejsFunction(this, `${modifiedModuleName}-${envs.STACK_NAME}-${stage}`, {
-      functionName: `${modifiedModuleName}-${envs.STACK_NAME}-${stage}`,
+    const lambdaFunction = new NodejsFunction(this, `${modifiedModuleName}-${envs.STACK_NAME}`, {
+      functionName: `${modifiedModuleName}-${envs.STACK_NAME}`,
       entry: path.join(__dirname, `../../src/modules/${moduleName}/app/${moduleName}_presenter.ts`),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_18_X,
@@ -47,31 +41,19 @@ export class LambdaStack extends Construct {
   constructor(scope: Construct, apiGatewayResource: Resource, environmentVariables: Record<string, any>) {
     super(scope, 'NotemauaMssAuthLambdaStack')
 
-    this.lambdaLayer = new lambda.LayerVersion(this, 'NotemauaAuthLayer', {
+    this.lambdaLayer = new lambda.LayerVersion(this, `${envs.STACK_NAME}-Layer`, {
       code: lambda.Code.fromAsset('./shared'),
       compatibleRuntimes: [lambda.Runtime.NODEJS_18_X],
     })
 
     this.getUserFunction = this.createLambdaApiGatewayIntegration('get_user', 'GET', apiGatewayResource, environmentVariables)
     this.getAllUsersFunction = this.createLambdaApiGatewayIntegration('get_all_users', 'GET', apiGatewayResource, environmentVariables)
-    this.createUserFunction = this.createLambdaApiGatewayIntegration('create_user', 'POST', apiGatewayResource, environmentVariables)
-    this.deleteUserFunction = this.createLambdaApiGatewayIntegration('delete_user', 'DELETE', apiGatewayResource, environmentVariables)
-    this.updateUserFunction = this.createLambdaApiGatewayIntegration('update_user', 'PUT', apiGatewayResource, environmentVariables)
-    this.loginFunction = this.createLambdaApiGatewayIntegration('login', 'POST', apiGatewayResource, environmentVariables)
-    this.forgotPasswordFunction = this.createLambdaApiGatewayIntegration('forgot_password', 'POST', apiGatewayResource, environmentVariables)
-    this.confirmForgotPasswordFunction = this.createLambdaApiGatewayIntegration('confirm_forgot_password', 'POST', apiGatewayResource, environmentVariables)
-    this.firstAccessFunction = this.createLambdaApiGatewayIntegration('first_access', 'POST', apiGatewayResource, environmentVariables)
+    this.oAuthUserFunction = this.createLambdaApiGatewayIntegration('oauth_user', 'POST', apiGatewayResource, environmentVariables)
 
     this.functionsThatNeedDynamoPermissions = [
       this.getUserFunction, 
-      this.createUserFunction, 
-      this.deleteUserFunction, 
-      this.updateUserFunction, 
       this.getAllUsersFunction,
-      this.loginFunction,
-      this.forgotPasswordFunction,
-      this.confirmForgotPasswordFunction,
-      this.firstAccessFunction
+      this.oAuthUserFunction
     ]
   }
 }

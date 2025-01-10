@@ -10,7 +10,7 @@ export class TemplateStack extends Stack {
   constructor(scope: Construct, constructId: string, props?: StackProps) {
     super(scope, constructId, props)
 
-    const restApi = new RestApi(this, `${env.STACK_NAME}-${stage}-RestApi`, {
+    const restApi = new RestApi(this, `${env.STACK_NAME}x-RestApi`, {
       restApiName: `${env.STACK_NAME}-${stage}-RestApi`,
       description: 'This is the REST API for the Notemaua MSS Auth Service.',
       defaultCorsPreflightOptions: {
@@ -28,26 +28,20 @@ export class TemplateStack extends Stack {
       }
     })
 
-    const dynamoTable = new TemplateDynamoTable(this, `${env.STACK_NAME}-${stage}-DynamoTable`)
+    const dynamoTable = new TemplateDynamoTable(this, `${env.STACK_NAME}-DynamoTable`)
 
     const ENVIRONMENT_VARIABLES = {
       'STAGE': stage,
       'DYNAMO_TABLE_NAME': env.DYNAMO_TABLE_NAME,
       'DYNAMO_PARTITION_KEY': 'PK',
       'DYNAMO_SORT_KEY': 'SK',
-      'REGION': env.REGION,
+      'AWS_REGION': env.REGION,
     }
 
     const lambdaStack = new LambdaStack(this, apigatewayResource, ENVIRONMENT_VARIABLES)
 
     dynamoTable.table.grantReadWriteData(lambdaStack.getUserFunction)
-    dynamoTable.table.grantReadWriteData(lambdaStack.createUserFunction)
-    dynamoTable.table.grantReadWriteData(lambdaStack.deleteUserFunction)
-    dynamoTable.table.grantReadWriteData(lambdaStack.updateUserFunction)
     dynamoTable.table.grantReadWriteData(lambdaStack.getAllUsersFunction)
-    dynamoTable.table.grantReadWriteData(lambdaStack.loginFunction)
-    dynamoTable.table.grantReadWriteData(lambdaStack.forgotPasswordFunction)
-    dynamoTable.table.grantReadWriteData(lambdaStack.confirmForgotPasswordFunction)
-    dynamoTable.table.grantReadWriteData(lambdaStack.firstAccessFunction)
+    dynamoTable.table.grantReadWriteData(lambdaStack.oAuthUserFunction)
   }
 }
