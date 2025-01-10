@@ -6,17 +6,21 @@ import { LambdaStack } from './lambda_stack'
 import { envs as env, envs } from '../../index'
 // import { stage } from 'get_stage_env'
 
-let stage: string
-
-if (envs.GITHUB_REF.includes('prod')) {
-  stage = 'PROD'
-} else if (envs.GITHUB_REF.includes('homolog')) {
-  stage = 'HOMOLOG'
-} else if (envs.GITHUB_REF.includes('dev')) {
-  stage = 'DEV'
-} else {
-  stage = 'TEST'
+if (!envs.GITHUB_REF) {
+  throw new Error('GITHUB_REF is not defined in the environment variables.');
 }
+
+let stage: string;
+if (envs.GITHUB_REF.includes('prod')) {
+  stage = 'PROD';
+} else if (envs.GITHUB_REF.includes('homolog')) {
+  stage = 'HOMOLOG';
+} else if (envs.GITHUB_REF.includes('dev')) {
+  stage = 'DEV';
+} else {
+  stage = 'TEST';
+}
+
 
 export class TemplateStack extends Stack {
   constructor(scope: Construct, constructId: string, props?: StackProps) {
