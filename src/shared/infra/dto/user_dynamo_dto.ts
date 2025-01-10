@@ -3,72 +3,80 @@ import { ROLE } from '../../../shared/domain/enums/role_enum'
 import { User } from '../../domain/entities/user'
 
 type UserDynamoDTOProps = {
-  ra: string
-  name: string
+  id: string
+  name: string | null
   email: string
   role: ROLE
-  password?: string
+  createdAt: Date | undefined
+  updatedAt: Date | undefined
 }
 
 export class UserDynamoDTO {
-  private ra: string
-  private name: string
+  private id: string
+  private name: string | null
   private email: string
   private role: ROLE
-  private password?: string
+  private createdAt: Date
+  private updatedAt: Date
 
   constructor (props: UserDynamoDTOProps) {
-    this.ra = props.ra
+    this.id = props.id
     this.name = props.name
     this.email = props.email
     this.role = props.role
-    this.password = props.password
+    this.createdAt = props.createdAt ?? new Date()
+    this.updatedAt = props.updatedAt ?? new Date()
   }
 
   static fromEntity(user: User): UserDynamoDTO {
     return new UserDynamoDTO({
-      ra: user.ra,
+      id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role as ROLE,
-      password: user.password
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
     })
   }
 
   toDynamo() {
     return {
       'entity': 'user',
-      'ra': this.ra,
+      'id': this.id,
       'name': this.name,
       'email': this.email,
       'role': this.role,
-      'password': this.password,
+      'createdAt': this.createdAt.toISOString(),
+      'updatedAt': this.updatedAt.toISOString(),
     }
   }
 
   static fromDynamo(userData: any) {
-    const ra = userData['ra'] && userData['ra']['S'] ? userData['ra']['S'] : undefined
+    const id = userData['id'] && userData['id']['S'] ? userData['id']['S'] : undefined
     const name = userData['name'] && userData['name']['S'] ? userData['name']['S'] : undefined
     const email = userData['email'] && userData['email']['S'] ? userData['email']['S'] : undefined
     const role = userData['role'] && userData['role']['S'] ? userData['role']['S'] : undefined
-    const password = userData['password'] && userData['password']['S'] ? userData['password']['S'] : undefined
+    const createdAt = userData['createdAt'] && userData['createdAt']['S'] ? new Date(userData['createdAt']['S']) : undefined
+    const updatedAt = userData['updatedAt'] && userData['updatedAt']['S'] ? new Date(userData['updatedAt']['S']) : undefined
 
     return new UserDynamoDTO({
-      ra,
+      id,
       name,
       email,
       role,
-      password
+      createdAt,
+      updatedAt
     })
   }
 
   toEntity() {
     return new User({
-      ra: this.ra,
+      id: this.id,
       name: this.name,
       email: this.email,
       role: this.role,
-      password: this.password
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
     })
   }
 }
