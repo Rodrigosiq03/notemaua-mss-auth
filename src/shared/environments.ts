@@ -54,11 +54,11 @@ export class Environments {
   }
 
   static getUserRepo(): IUserRepository {
-    console.log('envsironments.getenvss().stage - [envsIRONMENTS - { GET USER REPO }] - ', Environments.getenvss().stage)
+    console.log('envsironments.getenvss().stage - [envsIRONMENTS - { GET USER REPO }] - ', Environments.getEnvs().stage)
     return new UserRepositoryDynamo()
   }
 
-  static getenvss(): Environments {
+  static getEnvs(): Environments {
     const envss = new Environments()
     envss.loadenvss()
     return envss
