@@ -40,8 +40,10 @@ export class OAuthUserUsecase {
                 get_user.name = token_response.displayName.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
                 await this.database_repo.updateUser(get_user);
             }
+            const ra = get_user.email.split('@')[0];
             user = new User({
                 id: get_user.id,
+                ra: ra,
                 name: get_user.name,
                 email: get_user.email,
                 role: get_user.role,
@@ -51,6 +53,7 @@ export class OAuthUserUsecase {
         } else {
             user = new User({
                 id: uuid(),
+                ra: token_response.mail.split('@')[0],
                 name: token_response.displayName.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "), // title case
                 email: token_response.mail,
                 role: ROLE.STUDENT,
