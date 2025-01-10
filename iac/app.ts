@@ -2,7 +2,8 @@
 import * as cdk from 'aws-cdk-lib'
 import { TemplateStack } from './iac/template_stack'
 import { adjustLayerDirectory } from './adjust_layer_directory'
-import env from '../index'
+import { stage } from './get_stage_env'
+import { envs as env } from '../index'
 
 console.log('Starting the CDK')
 
@@ -16,26 +17,14 @@ const awsRegion = env.REGION
 const awsAccount = env.AWS_ACCOUNT_ID
 const stackName = env.STACK_NAME
 
-let stage = ''
-
-if (stackName === 'prod') {
-  stage = 'PROD'
-} else if (stackName === 'homolog') {
-  stage = 'HOMOLOG'
-} else if (stackName === 'dev') {
-  stage = 'DEV'
-} else if (stackName === 'test') {
-  stage = 'TEST'
-}
-
 const tags = {
   'project': 'NotemauaMssAuth',
-  'stage': 'test',
+  'stage': stage,
   'stack': 'BACK',
-  'owner': 'Digao'
+  'owner': 'DevDynasty'
 }
 
-new TemplateStack(app, stackName as string, {
+new TemplateStack(app, `${stackName}-${stage}`, {
   env: {
     region: awsRegion,
     account: awsAccount

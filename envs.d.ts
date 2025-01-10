@@ -1,5 +1,6 @@
 declare namespace NodeJS {
   interface ProcessEnv {
+    GITHUB_REF_NAME: string
     STAGE: string
     REGION: string
     STACK_NAME: string

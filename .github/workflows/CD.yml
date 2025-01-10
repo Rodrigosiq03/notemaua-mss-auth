@@ -11,8 +11,6 @@ on:
       - prod
 jobs:
   DeployToAWS:
-    environment:
-      name: ${{ github.ref }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -46,12 +44,7 @@ jobs:
           echo STAGE=${{ secrets.STAGE }} >> $GITHUB_ENV
           echo AWS_REGION=${{ secrets.AWS_REGION }}>> $GITHUB_ENV
           echo STACK_NAME=${{ env.STACK_NAME }} >> $GITHUB_ENV
-          echo MAIL_USER=${{ secrets.MAIL_USER }} >> $GITHUB_ENV
-          echo MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} >> $GITHUB_ENV
           echo DYNAMO_TABLE_NAME=${{ secrets.DYNAMO_TABLE_NAME }} >> $GITHUB_ENV
-          echo DYNAMO_PARTITION_KEY=${{ secrets.DYNAMO_PARTITION_KEY }} >> $GITHUB_ENV
-          echo DYNAMO_SORT_KEY=${{ secrets.DYNAMO_SORT_KEY }} >> $GITHUB_ENV
-          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> $GITHUB_ENV
           
       - name: CDK Bootstrap
         run: |
@@ -72,9 +65,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           STACK_NAME: ${{ secrets.STACK_NAME }}
-          MAIL_USER: ${{ secrets.MAIL_USER }}
-          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
-          DYNAMO_PARTITION_KEY: ${{ secrets.DYNAMO_PARTITION_KEY }}
-          DYNAMO_SORT_KEY: ${{ secrets.DYNAMO_SORT_KEY }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}

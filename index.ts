@@ -8,7 +8,8 @@ config({ path: path.resolve(__dirname, './.env') })
 
 const envs = {
   STAGE: process.env.STAGE,
-  REGION: process.env.REGION,
+  GITHUB_REF: process.env.GITHUB_REF_NAME,
+  REGION: process.env.AWS_REGION,
   STACK_NAME: process.env.STACK_NAME,
   AWS_ACCOUNT_ID: process.env.AWS_ACCOUNT_ID,
   DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME,
@@ -26,4 +27,4 @@ const envs = {
 }
 console.log(envs)
 
-export default envs
+export { envs }

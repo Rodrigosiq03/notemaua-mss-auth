@@ -3,14 +3,15 @@ import { Cors, RestApi } from 'aws-cdk-lib/aws-apigateway'
 import { Construct } from 'constructs'
 import { TemplateDynamoTable } from './template_dynamo_table'
 import { LambdaStack } from './lambda_stack'
-import env from '../../index'
+import { envs as env } from '../../index'
+import { stage } from 'get_stage_env'
 
 export class TemplateStack extends Stack {
   constructor(scope: Construct, constructId: string, props?: StackProps) {
     super(scope, constructId, props)
 
-    const restApi = new RestApi(this, 'NotemauaMssAuthRESTAPI', {
-      restApiName: 'NotemauaMssAuthRESTAPI',
+    const restApi = new RestApi(this, `${env.STACK_NAME}-${stage}-RestApi`, {
+      restApiName: `${env.STACK_NAME}-${stage}-RestApi`,
       description: 'This is the REST API for the Notemaua MSS Auth Service.',
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
@@ -27,18 +28,14 @@ export class TemplateStack extends Stack {
       }
     })
 
-    const dynamoTable = new TemplateDynamoTable(this, 'NotemauaMssAuthTable')
+    const dynamoTable = new TemplateDynamoTable(this, `${env.STACK_NAME}-${stage}-DynamoTable`)
 
     const ENVIRONMENT_VARIABLES = {
-      'STAGE': env.STAGE,
+      'STAGE': stage,
       'DYNAMO_TABLE_NAME': env.DYNAMO_TABLE_NAME,
       'DYNAMO_PARTITION_KEY': 'PK',
       'DYNAMO_SORT_KEY': 'SK',
       'REGION': env.REGION,
-      'ENDPOINT_URL': env.ENDPOINT_URL,
-      'MAIL_USER': env.MAIL_USER,
-      'MAIL_PASSWORD': env.MAIL_PASSWORD,
-      'JWT_SECRET': env.JWT_SECRET,
     }
 
     const lambdaStack = new LambdaStack(this, apigatewayResource, ENVIRONMENT_VARIABLES)
