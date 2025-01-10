@@ -10,9 +10,11 @@ import { GetUserViewmodel } from './get_user_viewmodel'
 export class GetUserController {
   constructor(private usecase: GetUserUsecase) {}
 
-  async handle(request: IRequest, userDecoded: any) {
+  async handle(request: IRequest) {
     try {
-      const ra = userDecoded.ra
+
+      // tem que pegar do token
+      const ra = request.data.ra as string
 
       const user = await this.usecase.execute(ra)
 
