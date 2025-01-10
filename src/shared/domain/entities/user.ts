@@ -1,7 +1,7 @@
 import { EntityError } from '../../helpers/errors/domain_errors'
 import { ROLE } from '../enums/role_enum'
 
-class UserProps {
+export class UserProps {
   id!: string;
   ra!: string;
   name!: string | null;
