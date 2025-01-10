@@ -3,7 +3,7 @@
 import { Environments } from '../../../shared/environments'
 import { LambdaHttpRequest, LambdaHttpResponse } from '../../../shared/helpers/external_interfaces/http_lambda_requests'
 import { OAuthUserController } from './oauth_user_controller'
-import { OAuthUserUsecase } from './ouath_user_usecase'
+import { OAuthUserUsecase } from './oauth_user_usecase'
 
 const repo = Environments.getUserRepo()
 const usecase = new OAuthUserUsecase(repo)
