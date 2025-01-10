@@ -3,6 +3,7 @@ import { ROLE } from '../enums/role_enum'
 
 class UserProps {
   id!: string;
+  ra!: string;
   name!: string | null;
   email!: string;
   role!: ROLE;
@@ -12,6 +13,7 @@ class UserProps {
 
 export class User {
   id: string;
+  ra: string;
   name: string | null;
   email: string;
   role: ROLE;
@@ -20,6 +22,7 @@ export class User {
 
   constructor(props: UserProps) {
     this.id = this.validate_set_id(props.id);
+    this.ra = props.ra;
     this.name = props.name;
     this.email = this.validate_set_email(props.email);
     this.role = this.validate_set_role(props.role);
@@ -30,6 +33,7 @@ export class User {
   public to_json() {
     return {
       id: this.id,
+      ra: this.ra,
       name: this.name,
       email: this.email,
       role: this.role,
