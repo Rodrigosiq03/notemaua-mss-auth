@@ -13,30 +13,30 @@ console.log('Finished adjusting the layer directory')
 
 const app = new cdk.App()
 
-dotenv.config(); 
+dotenv.config() 
 
 const requiredEnvs: (keyof typeof env)[] = [
   'REGION',
   'AWS_ACCOUNT_ID',
   'STACK_NAME',
   'AWS_ACCESS_KEY_ID',
-  'AWS_SECRET_ACCESS_KEY'
-];
+  'AWS_SECRET_ACCESS_KEY_ID'
+]
 
 requiredEnvs.forEach((envVar) => {
   if (!env[envVar]) {
-      throw new Error(`Missing required environment variable: ${envVar}`);
+    throw new Error(`Missing required environment variable: ${envVar}`)
   }
-});
+})
 
 
 if (!env.REGION || !env.AWS_ACCOUNT_ID || !env.STACK_NAME) {
-  throw new Error('Missing required environment variables. AQUIIIIII AQUIIIII AQUIIIII AQUUIIIIII AQUIIIIII');
+  throw new Error('Missing required environment variables. AQUIIIIII AQUIIIII AQUIIIII AQUUIIIIII AQUIIIIII')
 }
 
-const awsRegion = env.REGION;
-const awsAccount = env.AWS_ACCOUNT_ID;
-const stackName = env.STACK_NAME;
+const awsRegion = env.REGION
+const awsAccount = env.AWS_ACCOUNT_ID
+const stackName = env.STACK_NAME
 
 
 const tags = {
