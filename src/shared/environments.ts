@@ -1,7 +1,7 @@
 import { STAGE } from './domain/enums/stage_enum'
 import { IUserRepository } from './domain/repositories/user_repository_interface'
 import { UserRepositoryDynamo } from './infra/repositories/user_repository_dynamo'
-import env from '../../index'
+import {envs} from '../../index'
 
 export class Environments {
   stage: STAGE = STAGE.TEST
@@ -15,24 +15,24 @@ export class Environments {
   mssName: string = ''
 
   configureLocal() {
-    console.log('process.env.STAGE - [ENVIRONMENTS - { CONFIGURE LOCAL }] - ', )
-    env.STAGE = env.STAGE || 'TEST'
+    console.log('process.envs.STAGE - [envsIRONMENTS - { CONFIGURE LOCAL }] - ', )
+    envs.STAGE = envs.STAGE || 'TEST'
   }
 
-  loadEnvs() {
-    if (!env.STAGE) {
+  loadenvss() {
+    if (!envs.STAGE) {
       this.configureLocal()
     }
 
-    this.stage = env.STAGE as STAGE
+    this.stage = envs.STAGE as STAGE
 
-    console.log('process.env.STAGE - [CHEGOU NO LOAD_ENVS] - ', env.STAGE)
-    console.log('process.env.DYNAMOTABLENAME - [CHEGOU NO LOAD_ENVS] - ', env.DYNAMO_TABLE_NAME)
-    console.log('process.env.ENDPOINT_URL - [CHEGOU NO LOAD_ENVS] - ', env.ENDPOINT_URL)
-    console.log('process.env.REGION - [CHEGOU NO LOAD_ENVS] - ', env.REGION)
-    console.log('this.stage - [CHEGOU NO LOAD_ENVS] - ', this.stage)
-    console.log('this.DYNAMOTABLENAME - [CHEGOU NO LOAD_ENVS] - ', this.dynamoTableName)
-    this.mssName = env.MSS_NAME as string
+    console.log('process.envs.STAGE - [CHEGOU NO LOAD_envsS] - ', envs.STAGE)
+    console.log('process.envs.DYNAMOTABLENAME - [CHEGOU NO LOAD_envsS] - ', envs.DYNAMO_TABLE_NAME)
+    console.log('process.envs.ENDPOINT_URL - [CHEGOU NO LOAD_envsS] - ', envs.ENDPOINT_URL)
+    console.log('process.envs.REGION - [CHEGOU NO LOAD_envsS] - ', envs.REGION)
+    console.log('this.stage - [CHEGOU NO LOAD_envsS] - ', this.stage)
+    console.log('this.DYNAMOTABLENAME - [CHEGOU NO LOAD_envsS] - ', this.dynamoTableName)
+    this.mssName = envs.MSS_NAME as string
 
     if (this.stage === STAGE.TEST) {
       this.s3BucketName = 'bucket-test'
@@ -43,24 +43,24 @@ export class Environments {
       this.dynamoSortKey = 'SK'
       this.cloudFrontGetUserPresenterDistributionDomain = 'https://d3q9q9q9q9q9q9.cloudfront.net'
     } else {
-      this.s3BucketName = env.S3_BUCKET_NAME as string
-      this.region = env.REGION as string
-      this.endpointUrl = env.ENDPOINT_URL as string
-      this.dynamoTableName = env.DYNAMO_TABLE_NAME as string
-      this.dynamoPartitionKey = env.DYNAMO_PARTITION_KEY as string
-      this.dynamoSortKey = env.DYNAMO_SORT_KEY as string
-      this.cloudFrontGetUserPresenterDistributionDomain = env.CLOUD_FRONT_DISTRIBUTION_DOMAIN as string
+      this.s3BucketName = envs.S3_BUCKET_NAME as string
+      this.region = envs.REGION as string
+      this.endpointUrl = envs.ENDPOINT_URL as string
+      this.dynamoTableName = envs.DYNAMO_TABLE_NAME as string
+      this.dynamoPartitionKey = envs.DYNAMO_PARTITION_KEY as string
+      this.dynamoSortKey = envs.DYNAMO_SORT_KEY as string
+      this.cloudFrontGetUserPresenterDistributionDomain = envs.CLOUD_FRONT_DISTRIBUTION_DOMAIN as string
     }
   }
 
   static getUserRepo(): IUserRepository {
-    console.log('Environments.getEnvs().stage - [ENVIRONMENTS - { GET USER REPO }] - ', Environments.getEnvs().stage)
+    console.log('envsironments.getenvss().stage - [envsIRONMENTS - { GET USER REPO }] - ', Environments.getenvss().stage)
     return new UserRepositoryDynamo()
   }
 
-  static getEnvs(): Environments {
-    const envs = new Environments()
-    envs.loadEnvs()
-    return envs
+  static getenvss(): Environments {
+    const envss = new Environments()
+    envss.loadenvss()
+    return envss
   }
 }
