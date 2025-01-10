@@ -3,8 +3,20 @@ import { Cors, RestApi } from 'aws-cdk-lib/aws-apigateway'
 import { Construct } from 'constructs'
 import { TemplateDynamoTable } from './template_dynamo_table'
 import { LambdaStack } from './lambda_stack'
-import { envs as env } from '../../index'
-import { stage } from 'get_stage_env'
+import { envs as env, envs } from '../../index'
+// import { stage } from 'get_stage_env'
+
+let stage: string
+
+if (envs.GITHUB_REF.includes('prod')) {
+  stage = 'PROD'
+} else if (envs.GITHUB_REF.includes('homolog')) {
+  stage = 'HOMOLOG'
+} else if (envs.GITHUB_REF.includes('dev')) {
+  stage = 'DEV'
+} else {
+  stage = 'TEST'
+}
 
 export class TemplateStack extends Stack {
   constructor(scope: Construct, constructId: string, props?: StackProps) {
