@@ -27,7 +27,7 @@ export class TokenAuth {
     }
 
     async generate_token(user_id: string): Promise<string> {
-        return jwt.sign({ user_id }, this.secret, { expiresIn: '1d' });
+        return jwt.sign({ user_id }, this.secret);
     }
 
     async decode_token(token: string): Promise<string> {
