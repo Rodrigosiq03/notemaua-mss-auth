@@ -23,7 +23,7 @@ jobs:
         run: |
           echo "Configuring AWS Credentials"
           aws configure set aws_access_key_id ${{ vars.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key_id ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
           aws configure set default.region ${{ vars.REGION }}
           aws configure set default.output json
       - name: Setting stage, stack name
