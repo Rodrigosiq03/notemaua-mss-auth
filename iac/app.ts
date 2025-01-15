@@ -39,7 +39,7 @@ const tags = {
   'owner': 'DevDynasty'
 }
 
-new TemplateStack(app, stackName, {
+new TemplateStack(app, stackName as string, {
   env: {
     region: awsRegion,
     account: awsAccount
