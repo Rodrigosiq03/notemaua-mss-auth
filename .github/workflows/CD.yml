@@ -1,87 +1,3 @@
-# name: Nodejs Typescript CD
-# on:
-#   workflow_run:
-#     workflows: ["Check & Create PR"]
-#     types:
-#       - completed
-#   push:
-#     branches:
-#       - dev
-#       - homolog
-#       - prod
-# jobs:
-#   DeployToAWS:
-#     environment:
-#       name: ${{ github.ref }}
-#     runs-on: ubuntu-latest
-#     permissions:
-#       id-token: write
-#       contents: read
-#     steps:
-#       - uses: actions/checkout@v2
-#       - name: Setup AWS Credentials
-#         run: |
-#           echo "Configuring AWS Credentials"
-#           aws configure set aws_access_key_id ${{ vars.AWS_ACCESS_KEY_ID }}
-#           aws configure set aws_secret_access_key_id ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
-#           aws configure set default.region ${{ vars.REGION }}
-#           aws configure set default.output json
-#       - name: Setting stage, stack name
-#         run: |
-#           echo "STAGE=${{ vars.STAGE }}" >> $GITHUB_ENV
-#           echo "STACK_NAME=${{ vars.STACK_NAME }}${{ github.ref_name }}" >> $GITHUB_ENV
-#       - uses: actions/checkout@v3
-#       - uses: actions/setup-node@v3
-#         with:
-#           node-version: 20
-
-#       - name: Installing Dependencies
-#         run: |
-#           yarn
-#           cd iac
-#           npm install -g aws-cdk
-#           npm i
-#       - name: Setup envs
-#         run: |
-#           echo STAGE=${{ vars.STAGE }} >> $GITHUB_ENV
-#           echo REGION=${{ vars.REGION }} >> $GITHUB_ENV
-#           echo AWS_ACCOUNT_ID=${{ vars.AWS_ACCOUNT_ID }} >> $GITHUB_ENV
-#           echo AWS_ACCESS_KEY_ID=${{ vars.AWS_ACCESS_KEY_ID }} >> $GITHUB_ENV
-#           echo AWS_SECRET_ACCESS_KEY=${{ vars.AWS_SECRET_ACCESS_KEY }} >> $GITHUB_ENV
-#           echo STACK_NAME=${{ vars.STACK_NAME }} >> $GITHUB_ENV
-#           echo GITHUB_REF_NAME=${{ github.ref_name }} >> $GITHUB_ENV
-#           echo DYNAMO_TABLE_NAME=${{ vars.DYNAMO_TABLE_NAME }} >> $GITHUB_ENV
-#       - name: Debug Environment Variables
-#         run: |
-#           echo "STAGE: $STAGE"
-#           echo "REGION: $REGION"
-#           echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
-#           echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
-#           echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
-#           echo "STACK_NAME: $STACK_NAME"
-#           echo "DYNAMO_TABLE_NAME: $DYNAMO_TABLE_NAME"
-#       - name: CDK Bootstrap
-#         run: |
-#           echo "CDK Bootstrap"
-#           cd iac
-#           aws cloudformation describe-stacks --stack-name CDKToolkit 2>&1 > /dev/null || \
-#             cdk bootstrap aws://${{ vars.AWS_ACCOUNT_ID }}/sa-east-1
-#       - name: Deploy with CDK
-#         run: |
-#           source $GITHUB_ENV
-#           yarn build
-#           cd iac          
-#           cdk synth
-#           cdk deploy --require-approval never
-#         env:
-#           STAGE: ${{ vars.STAGE }}
-#           AWS_ACCESS_KEY: ${{ vars.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY_ID: ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
-#           REGION: ${{ vars.REGION }}
-#           STACK_NAME: ${{ vars.STACK_NAME }}${{ github.ref_name }}
-#           DYNAMO_TABLE_NAME: ${{ vars.DYNAMO_TABLE_NAME }}
-
-
 name: Nodejs Typescript CD
 on:
   workflow_run:
@@ -93,7 +9,6 @@ on:
       - dev
       - homolog
       - prod
-
 jobs:
   DeployToAWS:
     environment:
@@ -103,57 +18,65 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - name: Setup AWS Credentials
+        run: |
+          echo "Configuring AWS Credentials"
+          aws configure set aws_access_key_id ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key_id ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
+          aws configure set default.region ${{ vars.REGION }}
+          aws configure set default.output json
+      - name: Setting stage, stack name
+        run: |
+          echo "STAGE=${{ vars.STAGE }}" >> $GITHUB_ENV
+          echo "STACK_NAME=${{ vars.STACK_NAME }}${{ github.ref_name }}" >> $GITHUB_ENV
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 20
 
       - name: Installing Dependencies
         run: |
-          yarn install
+          yarn
           cd iac
           npm install -g aws-cdk
-          npm install
-
-      - name: Setup AWS Credentials
+          npm i
+      - name: Setup envs
         run: |
-          echo "Configuring AWS Credentials"
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region ${{ secrets.AWS_REGION }}
-          aws configure set output json
-
-      - name: Setup Environment Variables
-        run: |
-          echo "STAGE=${{ vars.STAGE }}" >> $GITHUB_ENV
-          echo "STACK_NAME=${{ vars.STACK_NAME }}${{ github.ref_name }}" >> $GITHUB_ENV
-          echo "REGION=${{ vars.AWS_REGION }}" >> $GITHUB_ENV
-          echo "DYNAMO_TABLE_NAME=${{ vars.DYNAMO_TABLE_NAME }}" >> $GITHUB_ENV
-
+          echo STAGE=${{ vars.STAGE }} >> $GITHUB_ENV
+          echo REGION=${{ vars.REGION }} >> $GITHUB_ENV
+          echo AWS_ACCOUNT_ID=${{ vars.AWS_ACCOUNT_ID }} >> $GITHUB_ENV
+          echo AWS_ACCESS_KEY_ID=${{ vars.AWS_ACCESS_KEY_ID }} >> $GITHUB_ENV
+          echo AWS_SECRET_ACCESS_KEY=${{ vars.AWS_SECRET_ACCESS_KEY }} >> $GITHUB_ENV
+          echo STACK_NAME=${{ vars.STACK_NAME }} >> $GITHUB_ENV
+          echo GITHUB_REF_NAME=${{ github.ref_name }} >> $GITHUB_ENV
+          echo DYNAMO_TABLE_NAME=${{ vars.DYNAMO_TABLE_NAME }} >> $GITHUB_ENV
       - name: Debug Environment Variables
         run: |
           echo "STAGE: $STAGE"
           echo "REGION: $REGION"
+          echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
+          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+          echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
           echo "STACK_NAME: $STACK_NAME"
           echo "DYNAMO_TABLE_NAME: $DYNAMO_TABLE_NAME"
-
       - name: CDK Bootstrap
         run: |
+          echo "CDK Bootstrap"
           cd iac
           aws cloudformation describe-stacks --stack-name CDKToolkit 2>&1 > /dev/null || \
-            cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REGION }}
-
+            cdk bootstrap aws://${{ vars.AWS_ACCOUNT_ID }}/sa-east-1
       - name: Deploy with CDK
         run: |
-          cd iac
+          source $GITHUB_ENV
+          yarn build
+          cd iac          
           cdk synth
           cdk deploy --require-approval never
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          REGION: ${{ secrets.AWS_REGION }}
+          STAGE: ${{ vars.STAGE }}
+          AWS_ACCESS_KEY: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY_ID: ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
+          REGION: ${{ vars.REGION }}
           STACK_NAME: ${{ vars.STACK_NAME }}${{ github.ref_name }}
           DYNAMO_TABLE_NAME: ${{ vars.DYNAMO_TABLE_NAME }}
