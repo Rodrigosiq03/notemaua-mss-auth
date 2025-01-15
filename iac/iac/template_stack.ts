@@ -4,18 +4,23 @@ import { Construct } from 'constructs'
 import { TemplateDynamoTable } from './template_dynamo_table'
 import { LambdaStack } from './lambda_stack'
 import { envs as env, envs } from '../../index'
+// import { stage } from 'get_stage_env'
 
 if (!envs.GITHUB_REF) {
   throw new Error('GITHUB_REF is not defined in the environment variables.')
 }
 
-const stage = envs.GITHUB_REF.includes('prod')
-  ? 'PROD'
-  : envs.GITHUB_REF.includes('homolog')
-  ? 'HOMOLOG'
-  : envs.GITHUB_REF.includes('dev')
-  ? 'DEV'
-  : 'TEST'
+let stage: string
+if (envs.GITHUB_REF.includes('prod')) {
+  stage = 'PROD'
+} else if (envs.GITHUB_REF.includes('homolog')) {
+  stage = 'HOMOLOG'
+} else if (envs.GITHUB_REF.includes('dev')) {
+  stage = 'DEV'
+} else {
+  stage = 'TEST'
+}
+
 
 export class TemplateStack extends Stack {
   constructor(scope: Construct, constructId: string, props?: StackProps) {
@@ -43,10 +48,10 @@ export class TemplateStack extends Stack {
 
     const ENVIRONMENT_VARIABLES = {
       'STAGE': stage,
-      'DYNAMO_TABLE_NAME': env.DYNAMO_TABLE_NAME || '',
+      'DYNAMO_TABLE_NAME': env.DYNAMO_TABLE_NAME,
       'DYNAMO_PARTITION_KEY': 'PK',
       'DYNAMO_SORT_KEY': 'SK',
-      'REGION': env.REGION || '',
+      'REGION': env.REGION,
     }
 
     const lambdaStack = new LambdaStack(this, apigatewayResource, ENVIRONMENT_VARIABLES)
