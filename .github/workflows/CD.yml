@@ -51,6 +51,15 @@ jobs:
           echo STACK_NAME=${{ vars.STACK_NAME }} >> $GITHUB_ENV
           echo GITHUB_REF_NAME=${{ github.ref_name }} >> $GITHUB_ENV
           echo DYNAMO_TABLE_NAME=${{ vars.DYNAMO_TABLE_NAME }} >> $GITHUB_ENV
+      - name: Debug Environment Variables
+        run: |
+          echo "STAGE: $STAGE"
+          echo "REGION: $REGION"
+          echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
+          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+          echo "AWS_SECRET_ACCESS_KEY_ID: $AWS_SECRET_ACCESS_KEY_ID"
+          echo "STACK_NAME: $STACK_NAME"
+          echo "DYNAMO_TABLE_NAME: $DYNAMO_TABLE_NAME"
       - name: CDK Bootstrap
         run: |
           echo "CDK Bootstrap"
