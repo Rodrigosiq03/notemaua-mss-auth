@@ -27,7 +27,7 @@ export class TemplateStack extends Stack {
     super(scope, constructId, props)
 
     const restApi = new RestApi(this, `${env.STACK_NAME}-RestApi`, {
-      restApiName: `${env.STACK_NAME}-${stage}-RestApi`,
+      restApiName: `${env.STACK_NAME}-RestApi`,
       description: 'This is the REST API for the Notemaua MSS Auth Service.',
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
@@ -44,7 +44,7 @@ export class TemplateStack extends Stack {
       }
     })
 
-    const dynamoTable = new TemplateDynamoTable(this, `${env.STACK_NAME}-DynamoTable`)
+    const dynamoTable = new TemplateDynamoTable(this, `${env.STACK_NAME}-${env.DYNAMO_TABLE_NAME}`)
 
     const ENVIRONMENT_VARIABLES = {
       'STAGE': stage,
