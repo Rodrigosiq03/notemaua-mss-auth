@@ -15,7 +15,6 @@ export class LambdaStack extends Construct {
   getUserFunction: lambda.Function
   getAllUsersFunction: lambda.Function
   oAuthUserFunction: lambda.Function
-  healthCheckFunction: lambda.Function
 
 
   createLambdaApiGatewayIntegration(moduleName: string, method: string, mssStudentApiResource: Resource, environmentVariables: Record<string, any>) {
@@ -50,7 +49,6 @@ export class LambdaStack extends Construct {
     this.getUserFunction = this.createLambdaApiGatewayIntegration('get_user', 'GET', apiGatewayResource, environmentVariables)
     this.getAllUsersFunction = this.createLambdaApiGatewayIntegration('get_all_users', 'GET', apiGatewayResource, environmentVariables)
     this.oAuthUserFunction = this.createLambdaApiGatewayIntegration('oauth_user', 'POST', apiGatewayResource, environmentVariables)
-    this.healthCheckFunction = this.createLambdaApiGatewayIntegration('health_check', 'GET', apiGatewayResource, environmentVariables)
 
     this.functionsThatNeedDynamoPermissions = [
       this.getUserFunction, 
