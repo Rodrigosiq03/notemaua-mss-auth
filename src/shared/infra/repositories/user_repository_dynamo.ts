@@ -47,6 +47,7 @@ export class UserRepositoryDynamo implements IUserRepository {
         ':updatedAt': new Date().toISOString()
       }
     }
+    
 
     const resp = await this.dynamo.updateItem(
       UserRepositoryDynamo.partitionKeyFormat(user.email),
