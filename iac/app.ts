@@ -19,8 +19,6 @@ const requiredEnvs: (keyof typeof env)[] = [
   'REGION',
   'AWS_ACCOUNT_ID',
   'STACK_NAME',
-  'AWS_ACCESS_KEY_ID',
-  'AWS_SECRET_ACCESS_KEY_ID'
 ]
 
 requiredEnvs.forEach((envVar) => {
