@@ -11,8 +11,6 @@ export class Environments {
   dynamoTableName: string = ''
   dynamoPartitionKey: string = ''
   dynamoSortKey: string = ''
-  cloudFrontGetUserPresenterDistributionDomain: string = ''
-  mssName: string = ''
 
   configureLocal() {
     console.log('process.envs.STAGE - [envsIRONMENTS - { CONFIGURE LOCAL }] - ', )
@@ -32,7 +30,6 @@ export class Environments {
     console.log('process.envs.REGION - [CHEGOU NO LOAD_envsS] - ', envs.REGION)
     console.log('this.stage - [CHEGOU NO LOAD_envsS] - ', this.stage)
     console.log('this.DYNAMOTABLENAME - [CHEGOU NO LOAD_envsS] - ', this.dynamoTableName)
-    this.mssName = envs.MSS_NAME as string
 
     if (this.stage === STAGE.TEST) {
       this.s3BucketName = 'bucket-test'
@@ -41,7 +38,6 @@ export class Environments {
       this.dynamoTableName = 'UserMssTemplateTable'
       this.dynamoPartitionKey = 'PK'
       this.dynamoSortKey = 'SK'
-      this.cloudFrontGetUserPresenterDistributionDomain = 'https://d3q9q9q9q9q9q9.cloudfront.net'
     } else {
       this.s3BucketName = envs.S3_BUCKET_NAME as string
       this.region = envs.REGION as string
@@ -49,7 +45,6 @@ export class Environments {
       this.dynamoTableName = envs.DYNAMO_TABLE_NAME as string
       this.dynamoPartitionKey = envs.DYNAMO_PARTITION_KEY as string
       this.dynamoSortKey = envs.DYNAMO_SORT_KEY as string
-      this.cloudFrontGetUserPresenterDistributionDomain = envs.CLOUD_FRONT_DISTRIBUTION_DOMAIN as string
     }
   }
 
