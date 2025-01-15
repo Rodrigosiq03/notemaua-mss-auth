@@ -6,7 +6,6 @@ import { Resource, LambdaIntegration } from 'aws-cdk-lib/aws-apigateway'
 import { Duration } from 'aws-cdk-lib'
 import * as path from 'path'
 import { envs } from '../..'
-import { stage } from 'get_stage_env'
 
 export class LambdaStack extends Construct {
   functionsThatNeedDynamoPermissions: lambda.Function[] = []
