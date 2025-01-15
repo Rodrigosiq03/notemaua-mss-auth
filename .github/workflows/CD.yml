@@ -67,7 +67,7 @@ jobs:
         env:
           STAGE: ${{ vars.STAGE }}
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY_ID: ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ vars.AWS_SECRET_ACCESS_KEY_ID }}
           REGION: ${{ vars.REGION }}
           STACK_NAME: ${{ vars.STACK_NAME }}${{ github.ref_name }}
           DYNAMO_TABLE_NAME: ${{ vars.DYNAMO_TABLE_NAME }}
