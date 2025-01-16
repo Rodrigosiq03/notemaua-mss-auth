@@ -52,6 +52,10 @@ export class TemplateStack extends Stack {
       'DYNAMO_PARTITION_KEY': 'PK',
       'DYNAMO_SORT_KEY': 'SK',
       'REGION': env.REGION,
+      'SECRET_KEY': env.SECRET_KEY,
+      'AZURE_CLIENT_ID': env.AZURE_CLIENT_ID,
+      'AZURE_CLIENT_SECRET': env.AZURE_CLIENT_SECRET,
+      'AZURE_URL': env.AZURE_URL,
     }
 
     const lambdaStack = new LambdaStack(this, apigatewayResource, ENVIRONMENT_VARIABLES)
