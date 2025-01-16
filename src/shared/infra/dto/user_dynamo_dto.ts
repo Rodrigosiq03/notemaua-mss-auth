@@ -4,8 +4,8 @@ import { User } from '../../domain/entities/user'
 
 type UserDynamoDTOProps = {
   id: string
-  ra: string
-  name: string | null
+  ra?: string | undefined
+  name: string
   email: string
   role: ROLE
   createdAt: Date | undefined
@@ -14,8 +14,8 @@ type UserDynamoDTOProps = {
 
 export class UserDynamoDTO {
   private id: string
-  private ra: string
-  private name: string | null
+  private ra?: string | undefined
+  private name: string
   private email: string
   private role: ROLE
   private createdAt: Date
