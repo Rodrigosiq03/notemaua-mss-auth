@@ -26,8 +26,8 @@ export class TokenAuth {
         this.redirect_uri = process.env.AZURE_REDIRECT_URI || "";
     }
 
-    async generate_token(user_id: string): Promise<string> {
-        return jwt.sign({ user_id }, this.secret);
+    async generate_token(user_id: string, name: string, ra: string, role: string): Promise<string> {
+        return jwt.sign({ user_id, name, ra, role }, this.secret);
     }
 
     async decode_token(token: string): Promise<string> {
