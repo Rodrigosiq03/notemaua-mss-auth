@@ -2,7 +2,7 @@ import { User } from '../../../shared/domain/entities/user'
 import { ROLE } from '../../../shared/domain/enums/role_enum'
 
 export class UserViewmodel {
-  private ra: string
+  private ra: string | undefined
   private name: string
   private email: string
   private role: ROLE
