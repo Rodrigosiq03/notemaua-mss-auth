@@ -55,7 +55,8 @@ export class OAuthUserUsecase {
     }
 
     return {
-      token: await this.token_auth.generate_token(user.id),
+      token: await this.token_auth.generate_token(user.id!, user.name!, user.ra!, user.role!),
+
       created_user: !user,
     }
   }
