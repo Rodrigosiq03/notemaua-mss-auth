@@ -1,10 +1,13 @@
-import https from 'https';
-import dotenv from 'dotenv';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { UserNotAuthenticated } from '../errors/controller_errors';
-import querystring from 'querystring';
+import https from 'https'
+import dotenv from 'dotenv'
+import jwt, { JwtPayload } from 'jsonwebtoken'
+import { UserNotAuthenticated } from '../errors/controller_errors'
+import querystring from 'querystring'
+import axios from 'axios'
+import { envs } from '../../../..'
+import { ROLE } from '../../domain/enums/role_enum'
 
-dotenv.config();
+dotenv.config()
 
 interface AzureProps {
     displayName: string;
@@ -12,92 +15,101 @@ interface AzureProps {
 }
 
 export class TokenAuth {
-    secret: string;
-    tenant_id: string;
-    client_id: string;
-    client_secret: string;
-    redirect_uri: string;
+  secret: string
+  client_id: string
+  client_secret: string
 
-    constructor() {
-        this.secret = process.env.SECRET_KEY || "";
-        this.tenant_id = process.env.AZURE_TENANT_ID || "";
-        this.client_id = process.env.AZURE_CLIENT_ID || "";
-        this.client_secret = process.env.AZURE_CLIENT_SECRET || "";
-        this.redirect_uri = process.env.AZURE_REDIRECT_URI || "";
+  constructor() {
+    this.secret = process.env.SECRET_KEY || ''
+    this.client_id = process.env.AZURE_CLIENT_ID || ''
+    this.client_secret = process.env.AZURE_CLIENT_SECRET || ''
+  }
+
+  async decode_token(token: string): Promise<string> {
+    const decode_token = jwt.verify(token, this.secret) as JwtPayload
+    if (!decode_token.user_id) {
+      throw new UserNotAuthenticated('Invalid or expired token.')
+    }
+    return decode_token.user_id
+  }
+
+  async generate_token(email: string, name: string): Promise<string> {
+    // ra schema: 22.00680-0, 22.00680-1, 22.00680-2, 22.00680-3, 00.00000-0
+    const regexRa = /^(\d{2}\.\d{5}-\d)$/
+    const employeeOrStudent = email.split('@')[0]
+    let ra: string | undefined = undefined
+    let role: ROLE | undefined = undefined
+    if (regexRa.test(employeeOrStudent)) {
+      ra = employeeOrStudent
+      role = ROLE.STUDENT
+    } else {
+      role = ROLE.EMPLOYEE
     }
 
-    async generate_token(user_id: string, name: string, ra: string, role: string): Promise<string> {
-        return jwt.sign({ user_id, name, ra, role }, this.secret);
-    }
+    return jwt.sign({ user: { email, name, role, ra }}, this.secret)
+  }
 
-    async decode_token(token: string): Promise<string> {
-        const decode_token = jwt.verify(token, this.secret) as JwtPayload;
-        if (!decode_token.user_id) {
-            throw new UserNotAuthenticated('Invalid or expired token.');
+  async get_access_token(code: string, redirect_uri: string): Promise<string> {
+    const token_endpoint = 'https://login.microsoftonline.com/organizations/oauth2/v2.0/token'
+
+    const body = querystring.stringify({
+      client_id: this.client_id,
+      scope: 'User.Read openid profile email offline_access',
+      code: code,
+      redirect_uri,
+      grant_type: 'authorization_code',
+      client_secret: this.client_secret
+    })
+
+    try {
+      const response = await axios.post(token_endpoint, body, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(body)
         }
-        return decode_token.user_id;
+      })
+
+      return response.data.access_token
+    } catch (err: any) {
+      throw new UserNotAuthenticated(err.response.data.error_description)
+    }
+  }
+
+  async verify_azure_token(token: string): Promise<AzureProps> {
+    const options = {
+      url: envs.AZURE_URL,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     }
 
-    async get_access_token(code: string): Promise<string> {
-        const token_endpoint = `https://login.microsoftonline.com/${this.tenant_id}/oauth2/v2.0/token`;
+    try {
+      const response = await axios.get(envs.AZURE_URL, options)
+      console.log(response.data)
+      return {
+        displayName: response.data.displayName,
+        mail: response.data.mail
+      }
 
-        const body = querystring.stringify({
-            client_id: this.client_id,
-            scope: "User.Read",
-            code: code,
-            redirect_uri: this.redirect_uri,
-            grant_type: "authorization_code",
-            client_secret: this.client_secret
-        });
-
-        return new Promise((resolve, reject) => {
-            const req = https.request(token_endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Content-Length': Buffer.byteLength(body)
-                }
-            }, (res) => {
-                let data = '';
-                res.on('data', (chunk) => data += chunk);
-                res.on('end', () => {
-                    const parsedData = JSON.parse(data);
-                    if (parsedData.error) {
-                        reject(new UserNotAuthenticated(parsedData.error_description));
-                    } else {
-                        resolve(parsedData.access_token);
-                    }
-                });
-            });
-            req.on('error', reject);
-            req.write(body);
-            req.end();
-        });
+    } catch (err: any) {
+      throw new UserNotAuthenticated(err.response.data.error_description)
     }
 
-    async verify_azure_token(token: string): Promise<AzureProps> {
-        const url = "https://graph.microsoft.com/v1.0/me";
-        const options = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        };
-
-        return await new Promise((resolve, reject) => {
-            https.get(url, options, (res) => {
-                let data = '';
-                res.on('data', (chunk) => data += chunk);
-                res.on('end', () => {
-                    const response = JSON.parse(data);
-                    if (!response.displayName || !response.mail) {
-                        reject(new UserNotAuthenticated('Invalid or expired token.'));
-                    }
-                    resolve({
-                        displayName: response.displayName,
-                        mail: response.mail
-                    });
-                });
-            }).on("error", (err) => reject(err));
-        });
-    }
+    // return await new Promise((resolve, reject) => {
+    //   https.get(url, options, (res) => {
+    //     let data = ''
+    //     res.on('data', (chunk) => data += chunk)
+    //     res.on('end', () => {
+    //       const response = JSON.parse(data)
+    //       if (!response.displayName || !response.mail) {
+    //         reject(new UserNotAuthenticated('Invalid or expired token.'))
+    //       }
+    //       resolve({
+    //         displayName: response.displayName,
+    //         mail: response.mail
+    //       })
+    //     })
+    //   }).on('error', (err) => reject(err))
+    // })
+  }
 }
