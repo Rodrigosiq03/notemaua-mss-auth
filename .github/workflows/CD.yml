@@ -51,6 +51,10 @@ jobs:
           echo STACK_NAME=${{ vars.STACK_NAME }} >> $GITHUB_ENV
           echo GITHUB_REF_NAME=${{ github.ref_name }} >> $GITHUB_ENV
           echo DYNAMO_TABLE_NAME=${{ vars.DYNAMO_TABLE_NAME }} >> $GITHUB_ENV
+          echo AZURE_CLIENT_SECRET=${{ vars.AZURE_CLIENT_SECRET }} >> $GITHUB_ENV
+          echo AZURE_CLIENT_ID=${{ vars.AZURE_CLIENT_ID }} >> $GITHUB_ENV
+          echo AZURE_URL=${{ vars.AZURE_URL }} >> $GITHUB_ENV
+          echo SECRET_KEY=${{ vars.SECRET_KEY }} >> $GITHUB_ENV
       - name: CDK Bootstrap
         run: |
           echo "CDK Bootstrap"
@@ -71,3 +75,7 @@ jobs:
           REGION: ${{ vars.REGION }}
           STACK_NAME: ${{ vars.STACK_NAME }}-${{ github.ref_name }}
           DYNAMO_TABLE_NAME: ${{ vars.DYNAMO_TABLE_NAME }}
+          AZURE_CLIENT_SECRET: ${{ vars.AZURE_CLIENT_SECRET }}
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+          AZURE_URL: ${{ vars.AZURE_URL }}
+          SECRET_KEY: ${{ vars.SECRET_KEY }}
