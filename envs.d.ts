@@ -10,6 +10,10 @@ declare namespace NodeJS {
     DYNAMO_SORT_KEY: string
     ENDPOINT_URL: string
     S3_BUCKET_NAME: string
-    JWT_SECRET: string
+    SECRET_KEY: string
+    AZURE_CLIENT_ID: string
+    AZURE_CLIENT_SECRET: string
+    AZURE_REDIRECT_URI: string
+    AZURE_URL: string
   }
 }
