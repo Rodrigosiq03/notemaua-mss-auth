@@ -17,7 +17,10 @@ const envs = {
   DYNAMO_SORT_KEY: process.env.DYNAMO_SORT_KEY,
   ENDPOINT_URL: process.env.ENDPOINT_URL,
   S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
-  JWT_SECRET: process.env.JWT_SECRET,
+  SECRET_KEY: process.env.SECRET_KEY,
+  AZURE_CLIENT_ID: process.env.AZURE_CLIENT_ID,
+  AZURE_CLIENT_SECRET: process.env.AZURE_CLIENT_SECRET,
+  AZURE_URL: process.env.AZURE_URL,
 }
 console.log(envs)
 
