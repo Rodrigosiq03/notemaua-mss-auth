@@ -20,13 +20,14 @@ export class OAuthUserUsecase {
 
   public async execute(
     auth_code: string,
-  ): Promise<{ token: string; created_user: boolean }> {
+    redirect_uri: string,
+  ): Promise<{ token: string; is_user_created: boolean, created_user: User | undefined }> {
     if (!auth_code) {
       throw new MissingParameters('Authorization code')
     }
 
     const access_token = await this.token_auth
-      .get_access_token(auth_code)
+      .get_access_token(auth_code, redirect_uri)
       .catch((error) => {
         throw new UserNotAuthenticated(error.message)
       })
@@ -39,8 +40,9 @@ export class OAuthUserUsecase {
     if (!padrao.test(token_response.mail)) {
       throw new UserNotAllowed('Invalid Email, must be a maua.br domain.')
     }
-
     let user = await this.database_repo.getUserByEmail(token_response.mail)
+
+    
     if (!user) {
       user = new User({
         id: uuid(),
@@ -53,11 +55,12 @@ export class OAuthUserUsecase {
       })
       await this.database_repo.createUser(user)
     }
-
+    
+    const token =  await this.token_auth.generate_token(user.email, user.name)
     return {
-      token: await this.token_auth.generate_token(user.id!, user.name!, user.ra!, user.role!),
-
-      created_user: !user,
+      token,
+      is_user_created: !user ? true : false,
+      created_user: user,
     }
   }
 }
