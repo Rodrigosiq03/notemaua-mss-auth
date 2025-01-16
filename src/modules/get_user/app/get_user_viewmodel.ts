@@ -3,14 +3,14 @@ import { UserProps } from '../../../shared/domain/entities/user'
 import { STATE } from '../../../shared/domain/enums/state_enum'
 
 export class GetUserViewmodel {
-  private ra: string
+  private ra: string | undefined
   private name: string
   private email: string
   private role: ROLE
 
   constructor(props: UserProps) {
     this.ra = props.ra
-    this.name = props.name ?? ''
+    this.name = props.name
     this.email = props.email
     this.role = props.role as ROLE
   }
