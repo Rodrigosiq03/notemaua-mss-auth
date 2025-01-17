@@ -52,6 +52,12 @@ export class TokenAuth {
   async get_access_token(code: string, code_verifier: string, redirect_uri: string): Promise<string> {
     const token_endpoint = 'https://login.microsoftonline.com/organizations/oauth2/v2.0/token'
 
+    console.log('CHEGOU NO GET_ACCESS_TOKEN')
+
+    console.log('code_verifier', code_verifier)
+    console.log('code', code)
+    console.log('redirect_uri', redirect_uri)
+
     const body = querystring.stringify({
       client_id: this.client_id,
       scope: 'User.Read openid profile email offline_access',
