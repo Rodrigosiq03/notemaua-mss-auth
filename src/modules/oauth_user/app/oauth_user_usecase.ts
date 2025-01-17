@@ -38,8 +38,7 @@ export class OAuthUserUsecase {
       throw new UserNotAllowed('Invalid Email, must be a maua.br domain.')
     }
     let user = await this.database_repo.getUserByEmail(token_response.mail)
-
-    let is_user_created = false
+    
 
     
     if (!user) {
@@ -53,7 +52,6 @@ export class OAuthUserUsecase {
         updatedAt: new Date(),
       })
       await this.database_repo.createUser(user)
-      is_user_created = true
     }
     
     const token =  await this.token_auth.generate_token(user.email, user.name)
@@ -62,7 +60,7 @@ export class OAuthUserUsecase {
 
     return {
       token,
-      is_user_created,
+      is_user_created: !user ? true : false,
       created_user: user,
     }
   }
