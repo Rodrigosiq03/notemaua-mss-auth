@@ -49,7 +49,7 @@ export class TokenAuth {
     return jwt.sign({ user: { email, name, role, ra }}, this.secret)
   }
 
-  async get_access_token(code: string, redirect_uri: string): Promise<string> {
+  async get_access_token(code: string, code_challenge: string, redirect_uri: string): Promise<string> {
     const token_endpoint = 'https://login.microsoftonline.com/organizations/oauth2/v2.0/token'
 
     const body = querystring.stringify({
@@ -58,7 +58,8 @@ export class TokenAuth {
       code: code,
       redirect_uri,
       grant_type: 'authorization_code',
-      client_secret: this.client_secret
+      client_secret: this.client_secret,
+      code_verifier: code_challenge
     })
 
     try {

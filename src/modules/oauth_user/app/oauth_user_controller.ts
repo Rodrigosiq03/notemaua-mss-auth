@@ -15,15 +15,18 @@ export class OAuthUserController {
   async handle(request: IRequest)  {
     try {
       const authCode: string = request.data.authCode as string
+      const codeChallenge = request.data.codeChallenge as string
       const redirectUri: string = request.data.redirectUri as string
 
       if (!authCode) throw new MissingParameters('authCode')
+      if (!codeChallenge) throw new MissingParameters('codeChallenge')
       if (!redirectUri) throw new MissingParameters('redirectUri')
 
       if (typeof authCode !== 'string') throw new WrongTypeParameters('authCode', 'string', typeof authCode)
+      if (typeof codeChallenge !== 'string') throw new WrongTypeParameters('codeChallenge', 'string', typeof codeChallenge)
       if (typeof redirectUri !== 'string') throw new WrongTypeParameters('redirectUri', 'string', typeof redirectUri)
 
-      const response = await this.usecase.execute(authCode, redirectUri)
+      const response = await this.usecase.execute(authCode, codeChallenge, redirectUri)
 
       if (response.created_user) {
         return new Created({token: response.token, created_user: response.created_user, message: 'User has been created successfully'})
