@@ -20,11 +20,11 @@ export class OAuthUserUsecase {
 
   public async execute(
     auth_code: string,
-    code_challenge: string,
+    code_verifier: string,
     redirect_uri: string,
   ): Promise<{ token: string; is_user_created: boolean, created_user: User | undefined }> {
     const access_token = await this.token_auth
-      .get_access_token(auth_code, code_challenge, redirect_uri)
+      .get_access_token(auth_code, code_verifier, redirect_uri)
       .catch((error) => {
         throw new UserNotAuthenticated(error.message)
       })
