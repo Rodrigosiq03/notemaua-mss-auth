@@ -54,6 +54,9 @@ export class OAuthUserUsecase {
     }
     
     const token =  await this.token_auth.generate_token(user.email, user.name)
+
+    
+
     return {
       token,
       is_user_created: !user ? true : false,

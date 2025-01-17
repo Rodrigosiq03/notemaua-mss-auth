@@ -35,6 +35,9 @@ export class TokenAuth {
 
   async generate_token(email: string, name: string): Promise<string> {
     // ra schema: 22.00680-0, 22.00680-1, 22.00680-2, 22.00680-3, 00.00000-0
+
+    console.log('GENERATE TOKEN, email: ', email)
+    console.log('GENERATE TOKEN, name: ', name)
     const regexRa = /^(\d{2}\.\d{5}-\d)$/
     const employeeOrStudent = email.split('@')[0]
     let ra: string | undefined = undefined
@@ -46,7 +49,11 @@ export class TokenAuth {
       role = ROLE.EMPLOYEE
     }
 
-    return jwt.sign({ user: { email, name, role, ra }}, this.secret)
+    const token = jwt.sign({ user: { email, name, role, ra }}, this.secret)
+
+    console.log('GENERATE TOKEN, token: ', token)
+
+    return token
   }
 
   async get_access_token(code: string, code_verifier: string, redirect_uri: string): Promise<string> {
