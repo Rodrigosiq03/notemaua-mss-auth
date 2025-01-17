@@ -64,7 +64,6 @@ export class TokenAuth {
       code: code,
       redirect_uri,
       grant_type: 'authorization_code',
-      client_secret: this.client_secret,
       code_verifier
     })
 
