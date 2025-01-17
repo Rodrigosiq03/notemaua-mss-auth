@@ -1,7 +1,7 @@
 import { UserNotAuthenticated } from '../../../shared/helpers/errors/controller_errors'
 import { ForbiddenAction } from '../../../shared/helpers/errors/usecase_errors'
 import { IRequest } from '../../../shared/helpers/external_interfaces/external_interface'
-import { OK, Unauthorized } from '../../../shared/helpers/external_interfaces/http_codes'
+import { InternalServerError, OK, Unauthorized } from '../../../shared/helpers/external_interfaces/http_codes'
 import { CreateUserOAuthUsecase } from './create_user_oauth_usecase'
 
 export class CreateUserOAuthController {
@@ -26,6 +26,10 @@ export class CreateUserOAuthController {
       }
       if (error instanceof ForbiddenAction) {
         return new Unauthorized(error.message)
+      }
+
+      if (error instanceof Error) {
+        return new InternalServerError(error.message)
       }
 
     }
