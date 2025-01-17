@@ -9,7 +9,11 @@ export class CreateUserOAuthUsecase {
   constructor(private readonly database_repo: IUserRepository, private readonly token_auth: TokenAuth) {}
 
   async execute(accessToken: string) {
+    console.log('CREATE USER OAUTH USECASE, accessToken: ', accessToken)
     const { displayName: name, mail: email } = await this.token_auth.verify_azure_token(accessToken)
+
+    console.log('CREATE USER OAUTH USECASE, name: ', name)
+    console.log('CREATE USER OAUTH USECASE, email: ', email)
 
     const raRegex = /^(\d{2}\.\d{5}-\d)$/
     if (raRegex.test(email.split('@')[0])) {
@@ -17,6 +21,8 @@ export class CreateUserOAuthUsecase {
     }
 
     let user = await this.database_repo.getUserByEmail(email)
+
+    console.log('CREATE USER OAUTH USECASE, user: ', user)
 
     if (!user) {
       user = new User({
@@ -28,10 +34,14 @@ export class CreateUserOAuthUsecase {
         updatedAt: new Date(),
       })
 
+      console.log('CREATE USER OAUTH USECASE, ENTROU PARA CRIAR O USUARIO')
+      console.log(user)
+
       await this.database_repo.createUser(user)
     }
     
     const token = await this.token_auth.generate_token(email, name)
+    console.log('CREATE USER OAUTH USECASE, token: ', token)
     return { token, created_user: user }
 
   }
