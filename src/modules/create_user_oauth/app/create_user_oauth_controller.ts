@@ -11,6 +11,8 @@ export class CreateUserOAuthController {
     try {
       const auth = request.data.Authorization
 
+      console.log('CREATE USER OAUTH CONTROLLER, auth: ', auth)
+
       if (!auth) throw new ForbiddenAction('user')
       if (typeof auth !== 'string') throw new ForbiddenAction('user')
 
