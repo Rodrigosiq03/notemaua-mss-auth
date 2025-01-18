@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MissingParameters, WrongTypeParameters } from '../../../shared/helpers/errors/controller_errors'
 import { EntityError } from '../../../shared/helpers/errors/domain_errors'
-import { NoItemsFound } from '../../../shared/helpers/errors/usecase_errors'
+import { ForbiddenAction, NoItemsFound } from '../../../shared/helpers/errors/usecase_errors'
 import { IRequest } from '../../../shared/helpers/external_interfaces/external_interface'
 import { BadRequest, InternalServerError, NotFound, OK } from '../../../shared/helpers/external_interfaces/http_codes'
 import { GetUserUsecase } from './get_user_usecase'
@@ -13,10 +13,15 @@ export class GetUserController {
   async handle(request: IRequest) {
     try {
 
-      // tem que pegar do token
-      const ra = request.data.ra as string
+      const auth = request.data.Authorization
 
-      const user = await this.usecase.execute(ra)
+      if (!auth) throw new ForbiddenAction('this user')
+
+      if (typeof auth !== 'string') throw new ForbiddenAction('this user')
+
+      const token = auth.split(' ')[1]
+
+      const user = await this.usecase.execute(token)
 
       const viewmodel = new GetUserViewmodel(user)
 
