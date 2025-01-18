@@ -24,6 +24,8 @@ export class CreateUserOAuthUsecase {
 
     console.log('CREATE USER OAUTH USECASE, user: ', user)
 
+    let isUserCreated = false
+
     if (!user) {
       user = new User({
         id: uuid(),
@@ -38,11 +40,12 @@ export class CreateUserOAuthUsecase {
       console.log(user)
 
       await this.database_repo.createUser(user)
+      isUserCreated = true
     }
     
     const token = await this.token_auth.generate_token(email, name)
     console.log('CREATE USER OAUTH USECASE, token: ', token)
-    return { token, created_user: user }
+    return { token, created_user: user, is_user_created: isUserCreated }
 
   }
 }
