@@ -60,8 +60,8 @@ export class TemplateStack extends Stack {
 
     const lambdaStack = new LambdaStack(this, apigatewayResource, ENVIRONMENT_VARIABLES)
 
-    dynamoTable.table.grantReadWriteData(lambdaStack.getUserFunction)
-    dynamoTable.table.grantReadWriteData(lambdaStack.getAllUsersFunction)
-    dynamoTable.table.grantReadWriteData(lambdaStack.oAuthUserFunction)
+    for (const func of lambdaStack.functionsThatNeedDynamoPermissions) {
+      dynamoTable.table.grantReadWriteData(func)
+    }
   }
 }
