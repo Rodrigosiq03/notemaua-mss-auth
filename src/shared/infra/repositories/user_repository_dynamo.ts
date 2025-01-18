@@ -69,10 +69,10 @@ export class UserRepositoryDynamo implements IUserRepository {
     return Promise.resolve(user)
   }
 
-  async deleteUser(email: string): Promise<User> {
+  async deleteUser(email: string): Promise<User | undefined> {
     const user = await this.getUser(email)
 
-    if (!user) throw new NoItemsFound('email')
+    if (!user) return undefined
 
     await this.dynamo.deleteItem(UserRepositoryDynamo.partitionKeyFormat(email), UserRepositoryDynamo.sortKeyFormat(email))
 
