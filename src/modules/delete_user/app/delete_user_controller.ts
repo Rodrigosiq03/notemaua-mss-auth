@@ -20,7 +20,7 @@ export class DeleteUserController {
 
       const userDeleted  = await this.usecase.execute(accessToken)
 
-      return new OK({ isUserDeleted: userDeleted })
+      return new OK({ isUserDeleted: userDeleted.is_user_deleted })
 
     } catch(error: any) {
       if (error instanceof UserNotAuthenticated) {
