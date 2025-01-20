@@ -28,6 +28,8 @@ export class OAuthUserController {
 
       const response = await this.usecase.execute(authCode, codeVerifier, redirectUri)
 
+      console.log('RESPONSE: ', response)
+
       if (response.is_user_created) {
         return new Created({token: response.token, created_user: response.created_user, message: 'User has been created successfully'})
       }
